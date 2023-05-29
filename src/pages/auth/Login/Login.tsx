@@ -16,7 +16,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="main-container">
-      <div className="container">
+      <div className="container LoginContainer">
         <input type="checkbox" id="flip" />
         <div className="cover">
           <div className="front">

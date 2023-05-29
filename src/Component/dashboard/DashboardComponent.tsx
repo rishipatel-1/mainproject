@@ -1,78 +1,137 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import Coursedetails from "../../Component/Course/Coursedetails"
 import './DashboardComponent.css';
 
-const DashboardComponent = () => {
-  console.log("dash");
-  
+export interface Course {
+  title: string;
+  description: string;
+}
+
+ export interface SubCategory {
+  title: string;
+  practical: boolean;
+}
+
+const CourseDetails: React.FC<{ course: Course; goBack: () => void }> = ({ course, goBack }) => (
+  <div className="course-details">
+    <h4>{course.title}</h4>
+    <p>{course.description}</p>
+    <div className="subcategories">
+      <h5>Subcategories</h5>
+      {/* Render subcategories and practicals here */}
+    </div>
+    <button className="back-button" onClick={goBack}>
+      &larr; Back to Dashboard
+    </button>
+  </div>
+);
+
+const DashboardComponent: React.FC = () => {
+  const studentData = [
+    { label: 'Total Students', data: 100 },
+  ];
+
+  const courseData = [
+    { label: 'Total Courses', data: 20 },
+  ];
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+
+  const addCourse = () => {
+    const newCourse: Course = { title, description };
+    setCourses([...courses, newCourse]);
+    setTitle('');
+    setDescription('');
+  };
+
+  const handleArrowClick = (course: Course) => {
+    setSelectedCourse(course);
+    setShowDetails(true);
+  };
+
+  const handleGoBack = () => {
+    setShowDetails(false);
+    setSelectedCourse(null);
+  };
+
   return (
-     
-            <div className="row">
-        <div className="col-xl-3 col-sm-6 mb-3">
-          <div className="card text-white bg-primary o-hidden h-100">
-            <div className="card-body">
-              <div className="card-body-icon">
-                <i className="fa fa-fw fa-comments"></i>
-              </div>
-              <div className="mr-5">26 New Messages!</div>
+    <>
+      {!showDetails ? (
+        <div className="container DashboardContainer">
+          <h3>Dashboard</h3>
+
+          <div className="row mt-4">
+            <div className="col-md-6">
+              <BarChart width={400} height={300} data={studentData}>
+                <Bar dataKey="data" fill="rgba(54, 162, 235, 0.6)" />
+                <XAxis dataKey="label" />
+                <YAxis />
+                <Tooltip />
+              </BarChart>
             </div>
-            <a className="card-footer text-white clearfix small " href="#">
-              <span className="float-left">View Details</span>
-              <span className="float-right">
-                <i className="fa fa-angle-right"></i>
-              </span>
-            </a>
+            <div className="col-md-6">
+              <BarChart width={400} height={300} data={courseData}>
+                <Bar dataKey="data" fill="rgba(75, 192, 192, 0.6)" />
+                <XAxis dataKey="label" />
+                <YAxis />
+                <Tooltip />
+              </BarChart>
+            </div>
+          </div>
+
+          <div className="row mt-4">
+            <div className="col-md-12">
+              <div className="card">
+                <div className="card-header">Add Task</div>
+                <div className="card-body">
+                  <form>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input type="text" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea className="form-control" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
+                    </div>
+                    <button type="button" className="btn btn-primary mt-3" onClick={addCourse}>
+                      Add Task
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="container mt-4">
+            <div className="row mt-4">
+              <div className="text-center">
+                <h5>Courses</h5>
+              </div>
+              {courses.map((course, index) => (
+                <div className="col-md-4" key={index}>
+                  <div className="card mt-3">
+                    <div className="card-header text-center">{course.title}</div>
+                    <div className="card-body Description">
+                      <p className="card-text">{course.description}</p>
+                      <button className="arrow-button" onClick={() => handleArrowClick(course)}>
+                        &rarr;
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="col-xl-3 col-sm-6 mb-3">
-          <div className="card text-white bg-warning o-hidden h-100">
-            <div className="card-body">
-              <div className="card-body-icon">
-                <i className="fa fa-fw fa-list"></i>
-              </div>
-              <div className="mr-5">11 New Tasks!</div>
-            </div>
-            <a className="card-footer text-white clearfix small " href="#">
-              <span className="float-left">View Details</span>
-              <span className="float-right">
-                <i className="fa fa-angle-right"></i>
-              </span>
-            </a>
-          </div>
-        </div>
-        <div className="col-xl-3 col-sm-6 mb-3">
-          <div className="card text-white bg-success o-hidden h-100">
-            <div className="card-body">
-              <div className="card-body-icon">
-                <i className="fa fa-fw fa-shopping-cart"></i>
-              </div>
-              <div className="mr-5">123 New Orders!</div>
-            </div>
-            <a className="card-footer text-white clearfix small " href="#">
-              <span className="float-left">View Details</span>
-              <span className="float-right">
-                <i className="fa fa-angle-right"></i>
-              </span>
-            </a>
-          </div>
-        </div>
-        <div className="col-xl-3 col-sm-6 mb-3">
-          <div className="card text-white bg-danger o-hidden h-100">
-            <div className="card-body">
-              <div className="card-body-icon">
-                <i className="fa fa-fw fa-support"></i>
-              </div>
-              <div className="mr-5">13 New Tickets!</div>
-            </div>
-            <a className="card-footer text-white clearfix small" href="#">
-              <span className="float-left">View Details</span>
-              <span className="float-right">
-                <i className="fa fa-angle-right"></i>
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-       
+      ) : (
+        <Coursedetails course={selectedCourse!} goBack={handleGoBack} />
+      )}
+    </>
   );
 };
 

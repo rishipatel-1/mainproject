@@ -61,7 +61,7 @@ const Navbar = () => {
           ></i>
         )}
         {!isMobile && (
-          <img className="logo__icon ms-2" src="https://www.youshe.id/favicon.ico" alt="Logo" />
+          <img className="logo__icon ms-2" src="https://www.youshe.id/favicon.ico" alt="Logo"  onClick={toggleMenu}/>
         )}
         <strong>Edu <span>Hub</span></strong>
         <div className="dropdown fixed-bottom-dropdown">
@@ -103,22 +103,12 @@ const Navbar = () => {
           <i className="fa fa-angle-left" aria-hidden="true"></i>
         </div>
     
-            {/* Rest of the menu items */}
           </nav>
         </div>
       )}
-      {/* {isMobile && (
-        <div className="nav-footer" onClick={toggleMenu}>
-          <i className="fa fa-angle-left" aria-hidden="true"></i>
-        </div>
-      )}
-      {!isMobile && (
-        <div className="nav-footer">
-          <i className={`fa fa-angle-${isMenuOpen ? 'left' : 'right'}`} aria-hidden="true" onClick={toggleMenu}></i>
-        </div>
-      )} */}
+  
       <main className="main">
-        <div className="title-bar">
+        <div className="title-bar text-center me-4">
           <h2>Overview</h2>
         </div>
         <div className="content-area">

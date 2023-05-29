@@ -17,8 +17,7 @@
 .container{
   position: relative;
   max-width: 850px;
-  height: 60vh !important;
-  width: 50vw !important;
+  width: 50vw;
   background: #fff;
   padding: 40px 30px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.2);

@@ -16,7 +16,7 @@ const UserDetailsComponent = () => {
   ];
 
   return (
-    <div className="container mt-3">
+    <div className="container mt-3 h-auto">
       <h3>User Details</h3>
       <div className="row">
         {users.map(user => (
