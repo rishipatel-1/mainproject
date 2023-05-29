@@ -98,29 +98,33 @@ const DashboardComponent: React.FC = () => {
                       <label>Description</label>
                       <textarea className="form-control" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
                     </div>
-                    <button type="button" className="btn btn-primary mt-3" onClick={addCourse}>
+                    <div className='text-center'>
+                    <button type="button" className="btn btn-primary mt-3 adddbtn" onClick={addCourse}>
                       Add Task
                     </button>
+                    </div>
                   </form>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="container mt-4">
+          <div className="container courseContainer mt-4 rounded-4">
             <div className="row mt-4">
               <div className="text-center">
-                <h5>Courses</h5>
+                <h2 className='fw-bold'>Courses</h2>
               </div>
               {courses.map((course, index) => (
-                <div className="col-md-4" key={index}>
+                <div className="col-md-4 mt-3" key={index}>
                   <div className="card mt-3">
                     <div className="card-header text-center">{course.title}</div>
                     <div className="card-body Description">
                       <p className="card-text">{course.description}</p>
+                      <div className='float-end '>
                       <button className="arrow-button" onClick={() => handleArrowClick(course)}>
                         &rarr;
                       </button>
+                        </div>
                     </div>
                   </div>
                 </div>

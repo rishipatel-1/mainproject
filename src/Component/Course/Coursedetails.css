@@ -1,5 +1,5 @@
 .CourseContainer{
-    width: 60vw !important;
+    width: 90%;
 }
 .form-group {
     margin-bottom: 20px;
@@ -9,7 +9,15 @@
     display: block;
     margin-bottom: 5px;
   }
-  
+  .title{
+    font-size: 30px;
+    font-weight: 600;
+  }
+  .img-fluid{
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+  }
   .form-group input,
   .form-group textarea {
     width: 100%;
@@ -37,4 +45,14 @@
     background-color: #0069d9;
     border-color: #0062cc;
   }
+  .back-button{
+    background:none;
+    margin-bottom: 20px;
+    padding: 3px 15px;
+    color: black;
     
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+  }  

@@ -92,11 +92,11 @@ const Navbar = () => {
             </div>
             <div className="nav__item" role="button" onClick={showUser}>
               <i className="fa fa-users" aria-hidden="true"></i>
-              <span>Manage Users</span>
+              <span>Manage Students</span>
             </div>
             <div className="nav__item" role="button" onClick={showUserUpdate}>
               <i className="fa fa-user" aria-hidden="true"></i>
-              <span>User Update</span>
+              <span>Student Update</span>
             </div>
            
         <div className="nav-footer" onClick={toggleMenu}>

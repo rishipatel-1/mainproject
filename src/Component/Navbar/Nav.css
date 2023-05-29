@@ -6,6 +6,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        
     }
     
     .logo__icon {
@@ -26,8 +27,8 @@
         background-color: #333;
         height: 100vh;
         color: #fff;
-        position: fixed;
-        top: 0;
+        position: sticky;
+        top: 0 !important;
         left: 0;
         bottom: 0;
         z-index: 1;
@@ -170,5 +171,8 @@
         .top-bar strong {
         font-size: 16px;
         }
+        .nav {
+           position: fixed;
+        }
     }
-    
+   
