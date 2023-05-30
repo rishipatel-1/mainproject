@@ -49,8 +49,7 @@ const UserComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch courses from API or any data source
-    // Set the fetched courses to the state
+
     const fetchedCourses = ['Course 1', 'Course 2', 'Course 3'];
     setCourses(fetchedCourses);
   }, []);
@@ -128,7 +127,6 @@ const UserComponent: React.FC = () => {
       );
     }
   };
-
   const handleCourseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     setNewStudent((prevStudent) => ({
@@ -137,12 +135,28 @@ const UserComponent: React.FC = () => {
     }));
   };
 
-  const handleDeleteCourse = (course: string) => {
-    setNewStudent((prevStudent) => ({
-      ...prevStudent,
-      courses: prevStudent.courses.filter((c) => c !== course),
-    }));
+
+  const handleEditCourseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setSelectedStudent((prevStudent) => {
+      if (prevStudent) {
+        const updatedCourses = [...prevStudent.courses, value];
+        return { ...prevStudent, courses: updatedCourses };
+      }
+      return null;
+    });
   };
+
+  const handleEditDeleteCourse = (course: string) => {
+    setSelectedStudent((prevStudent) => {
+      if (prevStudent) {
+        const updatedCourses = prevStudent.courses.filter((c) => c !== course);
+        return { ...prevStudent, courses: updatedCourses };
+      }
+      return null;
+    });
+  };
+
 
   const scrollToLatestStudent = () => {
     if (tableRef.current) {
@@ -225,15 +239,14 @@ const UserComponent: React.FC = () => {
           </div>
           <div>
             <label htmlFor="select-course">Select Course:</label>
-          
-            <select id="select-course"  onChange={(e) => handleCourseSelect(e)}>
+
+            <select id="select-course" onChange={handleCourseSelect}>
               <option value="">-- Select Course --</option>
-              {courseTitles.map((title:any) => (
+              {courseTitles.map((title: any) => (
                 <option key={title} value={title}>{title}</option>
               ))}
             </select>
           </div>
-
 
         </Modal.Body>
         <Modal.Footer>
@@ -271,6 +284,7 @@ const UserComponent: React.FC = () => {
               onChange={handleEditInputChange}
             />
           </div>
+
           <div>
             <label htmlFor="courses">Courses:</label>
             <input
@@ -283,11 +297,12 @@ const UserComponent: React.FC = () => {
           </div>
           <div>
             <label htmlFor="select-course">Select Course:</label>
-          
-            <select id="select-course"  onChange={(e) => handleCourseSelect(e)}>
+            <select id="select-course" onChange={handleEditCourseSelect}>
               <option value="">-- Select Course --</option>
-              {courseTitles.map((title:any) => (
-                <option key={title} value={title}>{title}</option>
+              {courseTitles.map((title: any) => (
+                <option key={title} value={title}>
+                  {title}
+                </option>
               ))}
             </select>
           </div>
