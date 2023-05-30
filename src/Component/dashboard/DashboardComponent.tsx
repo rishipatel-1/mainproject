@@ -2,32 +2,24 @@ import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import Coursedetails from "../../Component/Course/Coursedetails"
 import './DashboardComponent.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/Store';
+import { addCourse, Course as CourseType } from '../../slice/CourseSlice';
 
 export interface Course {
   title: string;
   description: string;
 }
 
- export interface SubCategory {
+export interface SubCategory {
   title: string;
   practical: boolean;
 }
 
-const CourseDetails: React.FC<{ course: Course; goBack: () => void }> = ({ course, goBack }) => (
-  <div className="course-details">
-    <h4>{course.title}</h4>
-    <p>{course.description}</p>
-    <div className="subcategories">
-      <h5>Subcategories</h5>
-      {/* Render subcategories and practicals here */}
-    </div>
-    <button className="back-button" onClick={goBack}>
-      &larr; Back to Dashboard
-    </button>
-  </div>
-);
-
 const DashboardComponent: React.FC = () => {
+  const dispatch = useDispatch();
+  const courses = useSelector((state: RootState) => state.course.courses);
+
   const studentData = [
     { label: 'Total Students', data: 100 },
   ];
@@ -36,15 +28,14 @@ const DashboardComponent: React.FC = () => {
     { label: 'Total Courses', data: 20 },
   ];
 
-  const [courses, setCourses] = useState<Course[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showDetails, setShowDetails] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
-  const addCourse = () => {
+  const handleAddCourse = () => {
     const newCourse: Course = { title, description };
-    setCourses([...courses, newCourse]);
+    dispatch(addCourse(newCourse));
     setTitle('');
     setDescription('');
   };
@@ -87,7 +78,7 @@ const DashboardComponent: React.FC = () => {
           <div className="row mt-4">
             <div className="col-md-12">
               <div className="card">
-                <div className="card-header">Add Task</div>
+                <div className="card-header">Add Courses</div>
                 <div className="card-body">
                   <form>
                     <div className="form-group">
@@ -99,7 +90,7 @@ const DashboardComponent: React.FC = () => {
                       <textarea className="form-control" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
                     </div>
                     <div className='text-center'>
-                    <button type="button" className="btn btn-primary mt-3 adddbtn" onClick={addCourse}>
+                    <button type="button" className="btn btn-primary mt-3 adddbtn" onClick={handleAddCourse}>
                       Add Task
                     </button>
                     </div>

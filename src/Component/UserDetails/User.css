@@ -92,3 +92,7 @@ button:hover {
 .modal-footer .btn-secondary {
   margin-right: 10px;
 }
+.table-container {
+   /* Adjust the height as per your requirement */
+  overflow: auto;
+}

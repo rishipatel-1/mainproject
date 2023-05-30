@@ -1,9 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Course } from '../dashboard/DashboardComponent';
 import './Coursedetails.css';
-import { Card } from "react-bootstrap";
+import { Card, Button } from 'react-bootstrap';
+import { BsPencil, BsTrash } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 
 interface SubCategory {
+  id: number;
   title: string;
   description: string;
   practical: string;
@@ -11,31 +14,68 @@ interface SubCategory {
 }
 
 const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ course, goBack }) => {
+  
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [subCategoryTitle, setSubCategoryTitle] = useState('');
   const [subCategoryDescription, setSubCategoryDescription] = useState('');
   const [subCategoryPractical, setSubCategoryPractical] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
   const addSubCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newSubCategory: SubCategory = {
-      title: subCategoryTitle,
-      description: subCategoryDescription,
-      practical: subCategoryPractical,
-      image: imageFile,
-    };
-    setSubCategories([...subCategories, newSubCategory]);
+
+    if (editIndex !== null) {
+   
+      const updatedSubCategories = [...subCategories];
+      const updatedSubCategory = {
+        id: updatedSubCategories[editIndex].id,
+        title: subCategoryTitle,
+        description: subCategoryDescription,
+        practical: subCategoryPractical,
+        image: imageFile,
+      };
+      updatedSubCategories[editIndex] = updatedSubCategory;
+      setSubCategories(updatedSubCategories);
+      setEditIndex(null);
+    } else {
+     
+      const newSubCategory: SubCategory = {
+        id: Date.now(),
+        title: subCategoryTitle,
+        description: subCategoryDescription,
+        practical: subCategoryPractical,
+        image: imageFile,
+      };
+      setSubCategories([...subCategories, newSubCategory]);
+    }
+
     setSubCategoryTitle('');
     setSubCategoryDescription('');
     setSubCategoryPractical('');
     setImageFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Clear the value of the file input
+      fileInputRef.current.value = '';
     }
   };
 
+  const handleEdit = (index: number) => {
+    const subCategoryToEdit = subCategories[index];
+    setSubCategoryTitle(subCategoryToEdit.title);
+    setSubCategoryDescription(subCategoryToEdit.description);
+    setSubCategoryPractical(subCategoryToEdit.practical);
+    setImageFile(subCategoryToEdit.image);
+    setEditIndex(index);
+  };
+
+  const handleDelete = (index: number) => {
+    const updatedSubCategories = subCategories.filter((_, i) => i !== index);
+    setSubCategories(updatedSubCategories);
+    setEditIndex(null);
+  };
+
+ 
   return (
     <div className="container CourseContainer">
       <button className="back-button" onClick={goBack}>
@@ -46,7 +86,7 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
         <h2 className='fs-1 fw-bold'>{course.title}</h2>
         <p className="py-2">{course.description}</p>
         <form onSubmit={addSubCategory}>
-          <div className="form-group">
+        <div className="form-group">
             <label>Title</label>
             <input
               type="text"
@@ -81,16 +121,29 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
               onChange={(e) => setImageFile(e.target.files && e.target.files[0])}
             />
           </div>
+
           <button type="submit" className="btn btn-primary mt-3">
-            Add Subcategory
+            Add Chapter
           </button>
         </form>
         <div className="subcategories">
-          <h5>List Of Items</h5>
+          <h5>List Of Chapters</h5>
           {subCategories.map((subCategory, index) => (
             <Card key={index} className='mt-4'>
               <Card.Body className='p-4 w-auto'>
+           
+            <div className='d-flex justify-content-between'>
                 <Card.Title className='title'>{subCategory.title}</Card.Title>
+  
+                <div className="card-header-icons">
+                    <Button variant="link" onClick={() => handleEdit(index)}>
+                      <BsPencil />
+                    </Button>
+                    <Button variant="link" onClick={() => handleDelete(index)}>
+                      <BsTrash />
+                    </Button>
+                  </div>
+            </div>
                 <Card.Text>{subCategory.description}</Card.Text>
                 <Card.Text>Practical: {subCategory.practical}</Card.Text>
                 {subCategory.image && (

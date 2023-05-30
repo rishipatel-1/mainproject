@@ -1,21 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { BsPencil, BsTrash } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/Store'; // Replace 'path/to/redux/store' with the actual path to your store configuration file
+
 import './User.css';
 
 interface Student {
   id: number;
   name: string;
   stack: string;
+  courses: string[];
 }
 
 const UserComponent: React.FC = () => {
+  const courseTitles = useSelector((state: RootState) => state.course.courses.map(course => course.title));
+
+
   const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<string[]>([]); // Added state for courses
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStudent, setNewStudent] = useState<Student>({
     id: 0,
     name: '',
     stack: '',
+    courses: [],
   });
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -32,11 +41,18 @@ const UserComponent: React.FC = () => {
       const name = names[Math.floor(Math.random() * names.length)];
       const stack = stacks[Math.floor(Math.random() * stacks.length)];
 
-      return { id, name, stack };
+      return { id, name, stack, courses: [] };
     };
 
     const updatedStudents = Array.from({ length: 10 }, () => generateRandomStudent());
     setStudents(updatedStudents);
+  }, []);
+
+  useEffect(() => {
+    // Fetch courses from API or any data source
+    // Set the fetched courses to the state
+    const fetchedCourses = ['Course 1', 'Course 2', 'Course 3'];
+    setCourses(fetchedCourses);
   }, []);
 
   const handleModalOpen = () => {
@@ -58,28 +74,23 @@ const UserComponent: React.FC = () => {
   };
 
   const handleSaveStudent = () => {
-    // Add your logic to save the new student
-    // Update the state with the new student
     const id = Math.floor(Math.random() * 9000) + 1000; // Generate random 4-digit ID
     const updatedNewStudent = { ...newStudent, id };
     const updatedStudents = [...students, updatedNewStudent];
     setStudents(updatedStudents);
-    setNewStudent({ id: 0, name: '', stack: '' });
+    setNewStudent({ id: 0, name: '', stack: '', courses: [] });
     setIsModalOpen(false);
     scrollToLatestStudent();
   };
 
   const handleUpdateStudent = () => {
-    // Add your logic to update the student
-    // Update the state with the updated student
-
-    // Example code to update the student in the list
     const updatedStudents = students.map((student) => {
       if (student.id === selectedStudent?.id) {
         return {
           ...student,
           name: selectedStudent.name,
           stack: selectedStudent.stack,
+          courses: selectedStudent.courses,
         };
       }
       return student;
@@ -90,22 +101,47 @@ const UserComponent: React.FC = () => {
   };
 
   const handleDeleteStudent = (id: number) => {
-    // Add your logic to delete the student
-    // Update the state by removing the student from the list
     const updatedStudents = students.filter((student) => student.id !== id);
     setStudents(updatedStudents);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewStudent((prevStudent) => ({ ...prevStudent, [name]: value }));
+    if (name === 'courses') {
+      const courses = value.split(',').map((course) => course.trim());
+      setNewStudent((prevStudent) => ({ ...prevStudent, [name]: courses }));
+    } else {
+      setNewStudent((prevStudent) => ({ ...prevStudent, [name]: value }));
+    }
   };
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setSelectedStudent((prevStudent) =>
-      prevStudent ? { ...prevStudent, [name]: value } : null
-    );
+    if (name === 'courses') {
+      const courses = value.split(',').map((course) => course.trim());
+      setSelectedStudent((prevStudent) =>
+        prevStudent ? { ...prevStudent, [name]: courses } : null
+      );
+    } else {
+      setSelectedStudent((prevStudent) =>
+        prevStudent ? { ...prevStudent, [name]: value } : null
+      );
+    }
+  };
+
+  const handleCourseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setNewStudent((prevStudent) => ({
+      ...prevStudent,
+      courses: [...prevStudent.courses, value],
+    }));
+  };
+
+  const handleDeleteCourse = (course: string) => {
+    setNewStudent((prevStudent) => ({
+      ...prevStudent,
+      courses: prevStudent.courses.filter((c) => c !== course),
+    }));
   };
 
   const scrollToLatestStudent = () => {
@@ -118,29 +154,39 @@ const UserComponent: React.FC = () => {
     <div className="container">
       <h3>Student Details</h3>
       <button onClick={handleModalOpen}>Add Student</button>
-      <table ref={tableRef}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Stack</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
-              <td>{student.id}</td>
-              <td>{student.name}</td>
-              <td>{student.stack}</td>
-              <td>
-                <BsPencil className="m-2" onClick={() => handleEditModalOpen(student)} />
-                <BsTrash className="m-2" onClick={() => handleDeleteStudent(student.id)} />
-              </td>
+      <div className="table-container">
+        <table ref={tableRef}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Stack</th>
+              <th>Courses</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.id}>
+                <td>{student.id}</td>
+                <td>{student.name}</td>
+                <td>{student.stack}</td>
+                <td>{student.courses.join(', ')}</td>
+                <td>
+                  <BsPencil
+                    className="m-2"
+                    onClick={() => handleEditModalOpen(student)}
+                  />
+                  <BsTrash
+                    className="m-2"
+                    onClick={() => handleDeleteStudent(student.id)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <Modal show={isModalOpen} onHide={handleModalClose}>
         <Modal.Header closeButton>
@@ -149,12 +195,46 @@ const UserComponent: React.FC = () => {
         <Modal.Body>
           <div>
             <label htmlFor="name">Name:</label>
-            <input type="text" id="name" name="name" value={newStudent.name} onChange={handleInputChange} />
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={newStudent.name}
+              onChange={handleInputChange}
+            />
           </div>
           <div>
             <label htmlFor="stack">Stack:</label>
-            <input type="text" id="stack" name="stack" value={newStudent.stack} onChange={handleInputChange} />
+            <input
+              type="text"
+              id="stack"
+              name="stack"
+              value={newStudent.stack}
+              onChange={handleInputChange}
+            />
           </div>
+          <div>
+            <label htmlFor="courses">Courses:</label>
+            <input
+              type="text"
+              id="courses"
+              name="courses"
+              value={newStudent.courses.join(', ')}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="select-course">Select Course:</label>
+          
+            <select id="select-course"  onChange={(e) => handleCourseSelect(e)}>
+              <option value="">-- Select Course --</option>
+              {courseTitles.map((title:any) => (
+                <option key={title} value={title}>{title}</option>
+              ))}
+            </select>
+          </div>
+
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalClose}>
@@ -191,6 +271,27 @@ const UserComponent: React.FC = () => {
               onChange={handleEditInputChange}
             />
           </div>
+          <div>
+            <label htmlFor="courses">Courses:</label>
+            <input
+              type="text"
+              id="courses"
+              name="courses"
+              value={selectedStudent?.courses.join(', ') || ''}
+              onChange={handleEditInputChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="select-course">Select Course:</label>
+          
+            <select id="select-course"  onChange={(e) => handleCourseSelect(e)}>
+              <option value="">-- Select Course --</option>
+              {courseTitles.map((title:any) => (
+                <option key={title} value={title}>{title}</option>
+              ))}
+            </select>
+          </div>
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleEditModalClose}>
