@@ -108,7 +108,7 @@ const UserDetailsComponent = () => {
         </Form.Group>
       </Form>
 <div className='tableDiv'>
-      <Table striped bordered className='mt-4'>
+      <Table striped bordered className='mt-4 rounded-3 '>
         <thead>
           <tr>
             <th>Name</th>

@@ -7,7 +7,7 @@ import { BrowserRouter, BrowserRouter as Router, Route, Routes } from 'react-rou
 import './App.css';
 
 function App() {
-   const [isAdmin, setIsAdmin] = useState(true)
+   const [isAdmin, setIsAdmin] = useState(false)
   return (
     <BrowserRouter>
       <div className="App">
