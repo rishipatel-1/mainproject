@@ -74,7 +74,7 @@ const Navbar = ({ isAdmin }:any) => { // Accept a prop "isAdmin" to determine th
         {!isMobile && (
           <img className="logo__icon ms-2" src="https://www.youshe.id/favicon.ico" alt="Logo" onClick={toggleMenu} />
         )}
-        <strong>Edu <span>Hub</span></strong>
+        {/* <strong>Edu <span>Hub</span></strong> */}
         <div className="dropdown fixed-bottom-dropdown">
           <a
             href="#"
