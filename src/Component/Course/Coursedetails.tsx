@@ -87,7 +87,7 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
         <p className="py-2">{course.description}</p>
         <form onSubmit={addSubCategory}>
         <div className="form-group">
-            <label>Title</label>
+            <label>Chapter Title</label>
             <input
               type="text"
               className="form-control"
@@ -96,7 +96,7 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
             />
           </div>
           <div className="form-group">
-            <label>Description</label>
+            <label>Chapter Description</label>
             <textarea
               className="form-control"
               value={subCategoryDescription}

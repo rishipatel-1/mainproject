@@ -16,7 +16,6 @@ interface Student {
 const UserComponent: React.FC = () => {
   const courseTitles = useSelector((state: RootState) => state.course.courses.map(course => course.title));
 
-
   const [students, setStudents] = useState<Student[]>([]);
   const [courses, setCourses] = useState<string[]>([]); // Added state for courses
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,27 +31,16 @@ const UserComponent: React.FC = () => {
 
   useEffect(() => {
     // Fetch students from API or any data source
-
-    // Example code to generate random students
-    const generateRandomStudent = (): Student => {
-      const id = Math.floor(Math.random() * 9000) + 1000; // Generate random 4-digit ID
-      const names = ['John Doe', 'Jane Smith', 'Michael Johnson', 'Emily Davis'];
-      const stacks = ['React', 'DevOps', '.NET', 'Python'];
-      const name = names[Math.floor(Math.random() * names.length)];
-      const stack = stacks[Math.floor(Math.random() * stacks.length)];
-
-      return { id, name, stack, courses: [] };
-    };
-
-    const updatedStudents = Array.from({ length: 10 }, () => generateRandomStudent());
-    setStudents(updatedStudents);
+    // Initially, the students list will be empty
+    setStudents([]);
   }, []);
 
   useEffect(() => {
-
-    const fetchedCourses = ['Course 1', 'Course 2', 'Course 3'];
-    setCourses(fetchedCourses);
+    // Fetch courses from API or any data source
+    // Initially, the courses list will be empty
+    setCourses([]);
   }, []);
+
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -291,7 +279,7 @@ const UserComponent: React.FC = () => {
               type="text"
               id="courses"
               name="courses"
-              value={selectedStudent?.courses.join(', ') || ''}
+              value={selectedStudent?.courses.join(', ')}
               onChange={handleEditInputChange}
             />
           </div>

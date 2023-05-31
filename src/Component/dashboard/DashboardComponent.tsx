@@ -91,7 +91,7 @@ const DashboardComponent: React.FC = () => {
                     </div>
                     <div className='text-center'>
                     <button type="button" className="btn btn-primary mt-3 adddbtn" onClick={handleAddCourse}>
-                      Add Task
+                      Add Courses
                     </button>
                     </div>
                   </form>
@@ -100,7 +100,7 @@ const DashboardComponent: React.FC = () => {
             </div>
           </div>
 
-          <div className="container courseContainer mt-4 rounded-4">
+          {/* <div className="container courseContainer mt-4 rounded-4"> */}
             <div className="row mt-4">
               <div className="text-center">
                 <h2 className='fw-bold'>Courses</h2>
@@ -121,7 +121,7 @@ const DashboardComponent: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          {/* </div> */}
         </div>
       ) : (
         <Coursedetails course={selectedCourse!} goBack={handleGoBack} />

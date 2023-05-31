@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import Login from './pages/auth/Login/Login';
 
 import Nav from "./Component/Navbar/Nav"
@@ -6,12 +7,13 @@ import { BrowserRouter, BrowserRouter as Router, Route, Routes } from 'react-rou
 import './App.css';
 
 function App() {
+   const [isAdmin, setIsAdmin] = useState(true)
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
           <Route path='/' element={<Login />} />
-          <Route path='/dashboard' element={<Nav />} />
+          <Route path='/dashboard' element={<Nav isAdmin={isAdmin}/>} />
 
         </Routes>
 
