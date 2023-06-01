@@ -4,6 +4,7 @@ import './Coursedetails.css';
 import { Card, Button } from 'react-bootstrap';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
+import { useFormik } from 'formik';
 
 interface SubCategory {
   id: number;
@@ -14,7 +15,6 @@ interface SubCategory {
 }
 
 const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ course, goBack }) => {
-  
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [subCategoryTitle, setSubCategoryTitle] = useState('');
   const [subCategoryDescription, setSubCategoryDescription] = useState('');
@@ -23,42 +23,60 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  const addSubCategory = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      subCategoryTitle: '',
+      subCategoryDescription: '',
+      subCategoryPractical: '',
+    },
+    validate: (values) => {
+      const errors: Partial<typeof values> = {};
+      if (!values.subCategoryTitle) {
+        errors.subCategoryTitle = 'Title is required';
+      }
+      if (!values.subCategoryDescription) {
+        errors.subCategoryDescription = 'Description is required';
+      }
+      if (!values.subCategoryPractical) {
+        errors.subCategoryPractical = 'Practical is required';
+      }
+      return errors;
+    },
+    onSubmit: (values) => {
+      const { subCategoryTitle, subCategoryDescription, subCategoryPractical } = values;
 
-    if (editIndex !== null) {
-   
-      const updatedSubCategories = [...subCategories];
-      const updatedSubCategory = {
-        id: updatedSubCategories[editIndex].id,
-        title: subCategoryTitle,
-        description: subCategoryDescription,
-        practical: subCategoryPractical,
-        image: imageFile,
-      };
-      updatedSubCategories[editIndex] = updatedSubCategory;
-      setSubCategories(updatedSubCategories);
-      setEditIndex(null);
-    } else {
-     
-      const newSubCategory: SubCategory = {
-        id: Date.now(),
-        title: subCategoryTitle,
-        description: subCategoryDescription,
-        practical: subCategoryPractical,
-        image: imageFile,
-      };
-      setSubCategories([...subCategories, newSubCategory]);
-    }
+      if (editIndex !== null) {
+        const updatedSubCategories = [...subCategories];
+        const updatedSubCategory = {
+          id: updatedSubCategories[editIndex].id,
+          title: subCategoryTitle,
+          description: subCategoryDescription,
+          practical: subCategoryPractical,
+          image: imageFile,
+        };
+        updatedSubCategories[editIndex] = updatedSubCategory;
+        setSubCategories(updatedSubCategories);
+        setEditIndex(null);
+      } else {
+        const newSubCategory = {
+          id: Date.now(),
+          title: subCategoryTitle,
+          description: subCategoryDescription,
+          practical: subCategoryPractical,
+          image: imageFile,
+        };
+        setSubCategories([...subCategories, newSubCategory]);
+      }
 
-    setSubCategoryTitle('');
-    setSubCategoryDescription('');
-    setSubCategoryPractical('');
-    setImageFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
+      setSubCategoryTitle('');
+      setSubCategoryDescription('');
+      setSubCategoryPractical('');
+      setImageFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    },
+  });
 
   const handleEdit = (index: number) => {
     const subCategoryToEdit = subCategories[index];
@@ -75,7 +93,6 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
     setEditIndex(null);
   };
 
- 
   return (
     <div className="container CourseContainer">
       <button className="back-btn" onClick={goBack}>
@@ -83,34 +100,49 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
       </button>
 
       <div className="course-details">
-        <h2 className='fs-1 fw-bold'>{course.title}</h2>
+        <h2 className="fs-1 fw-bold">{course.title}</h2>
         <p className="py-2">{course.description}</p>
-        <form onSubmit={addSubCategory}>
-        <div className="form-group">
+        <form onSubmit={formik.handleSubmit}>
+          <div className="form-group">
             <label>Chapter Title</label>
             <input
               type="text"
               className="form-control"
-              value={subCategoryTitle}
-              onChange={(e) => setSubCategoryTitle(e.target.value)}
+              value={formik.values.subCategoryTitle}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              name="subCategoryTitle"
             />
+            {formik.touched.subCategoryTitle && formik.errors.subCategoryTitle && (
+              <div className="error">{formik.errors.subCategoryTitle}</div>
+            )}
           </div>
           <div className="form-group">
             <label>Chapter Description</label>
             <textarea
               className="form-control"
-              value={subCategoryDescription}
-              onChange={(e) => setSubCategoryDescription(e.target.value)}
+              value={formik.values.subCategoryDescription}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              name="subCategoryDescription"
             ></textarea>
+            {formik.touched.subCategoryDescription && formik.errors.subCategoryDescription && (
+              <div className="error">{formik.errors.subCategoryDescription}</div>
+            )}
           </div>
           <div className="form-group">
             <label>Practical</label>
             <input
               type="text"
               className="form-control"
-              value={subCategoryPractical}
-              onChange={(e) => setSubCategoryPractical(e.target.value)}
+              value={formik.values.subCategoryPractical}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              name="subCategoryPractical"
             />
+            {formik.touched.subCategoryPractical && formik.errors.subCategoryPractical && (
+              <div className="error">{formik.errors.subCategoryPractical}</div>
+            )}
           </div>
           <div className="form-group">
             <label>Image</label>
@@ -129,13 +161,12 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
         <div className="subcategories">
           <h5>List Of Chapters</h5>
           {subCategories.map((subCategory, index) => (
-            <Card key={index} className='mt-4'>
-              <Card.Body className='p-4 w-auto'>
-           
-            <div className='d-flex justify-content-between'>
-                <Card.Title className='title'>{subCategory.title}</Card.Title>
-  
-                <div className="card-header-icons">
+            <Card key={index} className="mt-4">
+              <Card.Body className="p-4 w-auto">
+                <div className="d-flex justify-content-between">
+                  <Card.Title className="title">{subCategory.title}</Card.Title>
+
+                  <div className="card-header-icons">
                     <Button variant="link" onClick={() => handleEdit(index)}>
                       <BsPencil />
                     </Button>
@@ -143,7 +174,7 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
                       <BsTrash />
                     </Button>
                   </div>
-            </div>
+                </div>
                 <Card.Text>{subCategory.description}</Card.Text>
                 <Card.Text>Practical: {subCategory.practical}</Card.Text>
                 {subCategory.image && (

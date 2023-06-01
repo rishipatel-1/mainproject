@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/Store'; // Replace 'path/to/redux/store' with the actual path to your store configuration file
-
+import { useFormik } from 'formik';
 import './User.css';
 
 interface Student {
@@ -12,6 +12,7 @@ interface Student {
   stack: string;
   courses: string[];
 }
+
 
 const UserComponent: React.FC = () => {
   const courseTitles = useSelector((state: RootState) => state.course.courses.map(course => course.title));
@@ -135,15 +136,15 @@ const UserComponent: React.FC = () => {
     });
   };
 
-  const handleEditDeleteCourse = (course: string) => {
-    setSelectedStudent((prevStudent) => {
-      if (prevStudent) {
-        const updatedCourses = prevStudent.courses.filter((c) => c !== course);
-        return { ...prevStudent, courses: updatedCourses };
-      }
-      return null;
-    });
-  };
+  // const handleEditDeleteCourse = (course: string) => {
+  //   setSelectedStudent((prevStudent) => {
+  //     if (prevStudent) {
+  //       const updatedCourses = prevStudent.courses.filter((c) => c !== course);
+  //       return { ...prevStudent, courses: updatedCourses };
+  //     }
+  //     return null;
+  //   });
+  // };
 
 
   const scrollToLatestStudent = () => {
