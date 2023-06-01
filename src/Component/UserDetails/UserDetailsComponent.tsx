@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, ProgressBar, Form, Table } from 'react-bootstrap';
+import "./userDeatils.css"
 
 interface User {
   id: number;
@@ -10,11 +11,18 @@ interface User {
   totalTasks: number;
   submittedPracticals: string[];
   selectedCourse?: string;
+  grade?: number;
+  isSubmitted?: boolean;
 }
 
 const UserDetailsComponent = () => {
   const [selectedStack, setSelectedStack] = useState('All');
   const [selectedCourse, setSelectedCourse] = useState('All');
+  const [gradedUsers, setGradedUsers] = useState<number[]>([]);
+  const [isGradeSubmitted, setIsGradeSubmitted] = useState(false);
+  const [showGradeInput, setShowGradeInput] = useState(false);
+
+
   const [users, setUsers] = useState<User[]>([
     {
       id: 1,
@@ -49,7 +57,6 @@ const UserDetailsComponent = () => {
     setSelectedStack(event.target.value);
     setSelectedCourse('All');
   };
-
   const handleCourseChange = (event: React.ChangeEvent<any>, userId: number) => {
     const selectedValue = event.target.value;
 
@@ -59,6 +66,7 @@ const UserDetailsComponent = () => {
         return {
           ...user,
           selectedCourse: selectedValue,
+          grade: undefined, // Reset the grade when course changes
         };
       }
       return user;
@@ -66,8 +74,38 @@ const UserDetailsComponent = () => {
 
     // Update the users array with the updated users
     setUsers(updatedUsers);
+    setGradedUsers((prevGradedUsers) => prevGradedUsers.filter((id) => id !== userId)); // Remove user from graded users array if course changes
   };
 
+  const handleGradeSubmit = (event: React.FormEvent<HTMLFormElement>, userId: number) => {
+    event.preventDefault(); // Prevent form submission
+
+    const gradeInput = (event.target as HTMLFormElement)["grade"].value;
+    const grade = parseInt(gradeInput);
+
+    // Validate the grade value
+    if (grade < 0 || grade > 100) {
+      return; // Invalid grade, do not update the state
+    }
+
+    // Update the grade for the specific user
+    const updatedUsers = users.map((user) => {
+      if (user.id === userId) {
+        return {
+          ...user,
+          grade: grade,
+        };
+      }
+      return user;
+    });
+
+    // Update the users array with the updated users
+    setUsers(updatedUsers);
+
+    // Add the user to the graded users array
+    setGradedUsers((prevGradedUsers) => [...prevGradedUsers, userId]);
+    setShowGradeInput(false);
+  };
   const filteredUsers = users.filter((user) => {
     if (selectedStack === 'All' && selectedCourse === 'All') {
       return true;
@@ -82,7 +120,7 @@ const UserDetailsComponent = () => {
 
   return (
     <div className="container mt-3">
-      <h3>User Details</h3>
+      <h3>Student Details</h3>
       <Form>
         <Form.Group controlId="stackSelect">
           <Form.Label>Stack:</Form.Label>
@@ -107,61 +145,84 @@ const UserDetailsComponent = () => {
           </Form.Control>
         </Form.Group>
       </Form>
-<div className='tableDiv'>
-      <Table striped bordered className='mt-4 rounded-3 '>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Stack</th>
-            <th>Course</th>
-            <th>Status</th>
-            {/* <th>Practical Completed</th>
-            <th>Total Practical</th> */}
-            <th>Progress</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.stack}</td>
-                <td className='courseTable'>
-                  <Form.Control
-                    as="select"
-                    value={user.selectedCourse || selectedCourse}
-                    onChange={(event) => handleCourseChange(event, user.id)}
-                  >
-                    <option value="All">All</option>
-                    {user.courses.map((course) => (
-                      <option key={course} value={course} className="courseTable">
-                        {course}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </td>
-                <td>
-                  <span style={{ marginRight: '5px', color: user.submittedPracticals.includes(user.selectedCourse || selectedCourse) ? 'green' : 'red' }}>
-                    {user.submittedPracticals.includes(user.selectedCourse || selectedCourse) ? 'Submitted' : 'Not Submitted'}
-                  </span>
-                </td>
-                {/* <td>{user.tasksCompleted}</td>
-                <td>{user.totalTasks}</td> */}
-                <td>
-                  <ProgressBar now={(user.tasksCompleted / user.totalTasks) * 100} label={`${user.tasksCompleted}/${user.totalTasks}`} />
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className='tableDiv'>
+        <Table striped bordered className='mt-4 rounded-3 '>
+          <thead>
             <tr>
-              <td colSpan={7}>No users found</td>
+              <th>Name</th>
+              <th>Stack</th>
+              <th>Course</th>
+              <th>Status</th>
+              <th>Grade</th>
+              {/* <th>Practical Completed</th>
+            <th>Total Practical</th> */}
+              <th>Progress</th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.name}</td>
+                  <td>{user.stack}</td>
+                  <td className='courseTable'>
+                    <Form.Control
+                      as="select"
+                      value={user.selectedCourse || selectedCourse}
+                      onChange={(event) => handleCourseChange(event, user.id)}
+                    >
+                      <option value="All">All</option>
+                      {user.courses.map((course) => (
+                        <option key={course} value={course} className="courseTable">
+                          {course}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </td>
+                  <td>
+                    <span style={{ marginRight: '5px', color: user.submittedPracticals.includes(user.selectedCourse || selectedCourse) ? 'green' : 'grey' }}>
+                      {user.submittedPracticals.includes(user.selectedCourse || selectedCourse) ? 'Submitted' : 'Not Submitted'}
+                    </span>
+                  </td>
+                  <td className='gradeRow'> 
+                    {gradedUsers.includes(user.id) ? (
+                      <span className="graded-text">Graded: {user.grade}%</span>
+                    ) : (
+                      <>
+                        {user.submittedPracticals.includes(user.selectedCourse || selectedCourse) ? (
+                          <>
+                            {showGradeInput ? (
+                              <form onSubmit={(event) => handleGradeSubmit(event, user.id)} className="gradeform">
+                                <input type="number" name="grade" placeholder="Grade" className="grade-input" />
+                                <button type="submit" className="submit-button">&#x2714;</button>
+                              </form>
+                            ) : (
+                              <span className="grade-it-text" onClick={() => setShowGradeInput(true)}>Grade It</span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="not-graded-text">Not Graded</span>
+                        )}
+                      </>
+                    )}
+                  </td>
+                  {/* <td>{user.tasksCompleted}</td>
+                <td>{user.totalTasks}</td> */}
+                  <td>
+                    <ProgressBar now={(user.tasksCompleted / user.totalTasks) * 100} label={`${user.tasksCompleted}/${user.totalTasks}`} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7}>No users found</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
+
     </div>
-    
-</div>
   );
 };
 

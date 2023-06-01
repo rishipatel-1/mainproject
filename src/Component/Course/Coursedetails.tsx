@@ -78,7 +78,7 @@ const Coursedetails: React.FC<{ course: Course; goBack: () => void }> = ({ cours
  
   return (
     <div className="container CourseContainer">
-      <button className="back-button" onClick={goBack}>
+      <button className="back-btn" onClick={goBack}>
         &larr; &nbsp;Back
       </button>
 
