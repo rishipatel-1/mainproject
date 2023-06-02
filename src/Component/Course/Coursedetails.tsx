@@ -4,7 +4,6 @@ import './Coursedetails.css'
 import { Card, Button } from 'react-bootstrap'
 import { BsPencil, BsTrash } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
-import { useFormik } from 'formik'
 
 interface SubCategory {
   id: number
@@ -23,60 +22,40 @@ const Coursedetails: React.FC<{ course: Course, goBack: () => void }> = ({ cours
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [editIndex, setEditIndex] = useState<number | null>(null)
 
-  const formik = useFormik({
-    initialValues: {
-      subCategoryTitle: '',
-      subCategoryDescription: '',
-      subCategoryPractical: ''
-    },
-    validate: (values) => {
-      const errors: Partial<typeof values> = {}
-      if (values.subCategoryTitle.length === 0) {
-        errors.subCategoryTitle = 'Title is required'
-      }
-      if (values.subCategoryDescription.length === 0) {
-        errors.subCategoryDescription = 'Description is required'
-      }
-      if (values.subCategoryPractical.length === 0) {
-        errors.subCategoryPractical = 'Practical is required'
-      }
-      return errors
-    },
-    onSubmit: (values) => {
-      const { subCategoryTitle, subCategoryDescription, subCategoryPractical } = values
+  const addSubCategory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
 
-      if (editIndex !== null) {
-        const updatedSubCategories = [...subCategories]
-        const updatedSubCategory = {
-          id: updatedSubCategories[editIndex].id,
-          title: subCategoryTitle,
-          description: subCategoryDescription,
-          practical: subCategoryPractical,
-          image: imageFile
-        }
-        updatedSubCategories[editIndex] = updatedSubCategory
-        setSubCategories(updatedSubCategories)
-        setEditIndex(null)
-      } else {
-        const newSubCategory = {
-          id: Date.now(),
-          title: subCategoryTitle,
-          description: subCategoryDescription,
-          practical: subCategoryPractical,
-          image: imageFile
-        }
-        setSubCategories([...subCategories, newSubCategory])
+    if (editIndex !== null) {
+      const updatedSubCategories = [...subCategories]
+      const updatedSubCategory = {
+        id: updatedSubCategories[editIndex].id,
+        title: subCategoryTitle,
+        description: subCategoryDescription,
+        practical: subCategoryPractical,
+        image: imageFile
       }
-
-      setSubCategoryTitle('')
-      setSubCategoryDescription('')
-      setSubCategoryPractical('')
-      setImageFile(null)
-      if (fileInputRef.current != null) {
-        fileInputRef.current.value = ''
+      updatedSubCategories[editIndex] = updatedSubCategory
+      setSubCategories(updatedSubCategories)
+      setEditIndex(null)
+    } else {
+      const newSubCategory: SubCategory = {
+        id: Date.now(),
+        title: subCategoryTitle,
+        description: subCategoryDescription,
+        practical: subCategoryPractical,
+        image: imageFile
       }
+      setSubCategories([...subCategories, newSubCategory])
     }
-  })
+
+    setSubCategoryTitle('')
+    setSubCategoryDescription('')
+    setSubCategoryPractical('')
+    setImageFile(null)
+    if (fileInputRef.current != null) {
+      fileInputRef.current.value = ''
+    }
+  }
 
   const handleEdit = (index: number) => {
     const subCategoryToEdit = subCategories[index]
@@ -100,56 +79,34 @@ const Coursedetails: React.FC<{ course: Course, goBack: () => void }> = ({ cours
       </button>
 
       <div className="course-details">
-        <h2 className="fs-1 fw-bold">{course.title}</h2>
+        <h2 className='fs-1 fw-bold'>{course.title}</h2>
         <p className="py-2">{course.description}</p>
-        <form onSubmit={formik.handleSubmit}>
-          <div className="form-group">
+        <form onSubmit={addSubCategory}>
+        <div className="form-group">
             <label>Chapter Title</label>
             <input
               type="text"
               className="form-control"
-              value={formik.values.subCategoryTitle}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              name="subCategoryTitle"
+              value={subCategoryTitle}
+              onChange={(e) => { setSubCategoryTitle(e.target.value) }}
             />
-            {(formik.touched.subCategoryTitle ?? false) && formik.errors.subCategoryTitle != null
-              ? (
-                <div className="error">{formik.errors.subCategoryTitle}</div>
-                )
-              : null}
-
           </div>
           <div className="form-group">
             <label>Chapter Description</label>
             <textarea
               className="form-control"
-              value={formik.values.subCategoryDescription}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              name="subCategoryDescription"
+              value={subCategoryDescription}
+              onChange={(e) => { setSubCategoryDescription(e.target.value) }}
             ></textarea>
-            {(formik.touched.subCategoryDescription ?? false) && formik.errors.subCategoryDescription != null
-              ? (
-                <div className="error">{formik.errors.subCategoryDescription}</div>
-                )
-              : null}
           </div>
           <div className="form-group">
             <label>Practical</label>
             <input
               type="text"
               className="form-control"
-              value={formik.values.subCategoryPractical}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              name="subCategoryPractical"
+              value={subCategoryPractical}
+              onChange={(e) => { setSubCategoryPractical(e.target.value) }}
             />
-            {(formik.touched.subCategoryPractical ?? false) && formik.errors.subCategoryPractical != null
-              ? (
-                <div className="error">{formik.errors.subCategoryPractical}</div>
-                )
-              : null}
           </div>
           <div className="form-group">
             <label>Image</label>
@@ -157,9 +114,7 @@ const Coursedetails: React.FC<{ course: Course, goBack: () => void }> = ({ cours
               type="file"
               className="form-control"
               ref={fileInputRef}
-              onChange={(e) => {
-                setImageFile(e.target.files?.[0] ?? null)
-              }}
+              onChange={(e) => { setImageFile(e.target.files != null ? e.target.files[0] : null) }}
             />
           </div>
 
@@ -170,33 +125,22 @@ const Coursedetails: React.FC<{ course: Course, goBack: () => void }> = ({ cours
         <div className="subcategories">
           <h5>List Of Chapters</h5>
           {subCategories.map((subCategory, index) => (
-            <Card key={index} className="mt-4">
-              <Card.Body className="p-4 w-auto">
-                <div className="d-flex justify-content-between">
-                  <Card.Title className="title">{subCategory.title}</Card.Title>
-
-                  <div className="card-header-icons">
-                    <Button
-                      variant="link"
-                      onClick={() => {
-                        handleEdit(index)
-                      }}
-                    >
+            <Card key={index} className='mt-4'>
+              <Card.Body className='p-4 w-auto'>
+            <div className='d-flex justify-content-between'>
+                <Card.Title className='title'>{subCategory.title}</Card.Title>
+                <div className="card-header-icons">
+                    <Button variant="link" onClick={() => { handleEdit(index) }}>
                       <BsPencil />
                     </Button>
-                    <Button
-                      variant="link"
-                      onClick={() => {
-                        handleDelete(index)
-                      }}
-                    >
+                    <Button variant="link" onClick={() => { handleDelete(index) }}>
                       <BsTrash />
                     </Button>
                   </div>
-                </div>
+            </div>
                 <Card.Text>{subCategory.description}</Card.Text>
                 <Card.Text>Practical: {subCategory.practical}</Card.Text>
-                {subCategory.image != null && (
+                {(subCategory.image != null) && (
                   <img
                     src={URL.createObjectURL(subCategory.image)}
                     alt="Subcategory Image"
