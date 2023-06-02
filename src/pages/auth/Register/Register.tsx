@@ -1,17 +1,14 @@
-import React, { useState, useEffect, FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { type FormEvent } from 'react'
 
 // import { validate as validateEmail } from "email-validator";
 
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster } from 'react-hot-toast'
 
-const Registerr = (): JSX.Element => {
-  const navigator = useNavigate();
-
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+const Registerr = () => {
+  const handleSubmit = (event: { preventDefault: () => void }) => {
+    event.preventDefault()
     // Your logic here
-  };
+  }
 
   return (
     <>
@@ -26,11 +23,11 @@ const Registerr = (): JSX.Element => {
             </div>
             <div className="input-box">
               <i className="fas fa-envelope" />
-              <input type="text" placeholder="Enter your email"  />
+              <input type="text" placeholder="Enter your email" />
             </div>
             <div className="input-box">
               <i className="fas fa-lock" />
-              <input type="password" placeholder="Enter your password"  />
+              <input type="password" placeholder="Enter your password" />
             </div>
             <div className="button input-box">
               <input type="submit" value="Submit" onClick={handleSubmit} />
@@ -42,7 +39,7 @@ const Registerr = (): JSX.Element => {
         </form>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Registerr;
+export default Registerr

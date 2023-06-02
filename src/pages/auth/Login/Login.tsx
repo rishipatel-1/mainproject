@@ -1,18 +1,18 @@
-import React, { useState, FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 
-import "./Login.css";
-import Registerr from "../Register/Register";
+import './Login.css'
+import Registerr from '../Register/Register'
 
 const Login: React.FC = () => {
-  const [showPassword, setShowPassowrd] = useState(false);
-  const navigator = useNavigate();
+  const [showPassword, setShowPassowrd] = useState(false)
+  const navigator = useNavigate()
 
-  const handleSubmit = (event:any) => {
-    console.log("clicked");
-    navigator("/dashboard");
-    event.preventDefault();
-  };
+  const handleSubmit = (event: any) => {
+    console.log('clicked')
+    navigator('/dashboard')
+    event.preventDefault()
+  }
 
   return (
     <div className="main-container">
@@ -21,8 +21,7 @@ const Login: React.FC = () => {
         <div className="cover">
           <div className="front">
             <img
-            src="https://img.freepik.com/free-vector/computer-login-concept-illustration_114360-7962.jpg?w=2000"
-              
+              src="https://img.freepik.com/free-vector/computer-login-concept-illustration_114360-7962.jpg?w=2000"
               className="frontimage"
               alt=""
             />
@@ -52,40 +51,45 @@ const Login: React.FC = () => {
                   <div className="input-box">
                     <i className="fas fa-lock" />
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
-                     
-                      // value={password}
-                      // onChange={onPasswordChange}
-                      // required
-                      // setIsVisited={setPasswordIsVisited}
-                      // isError={passwordShouldShowError}
-                      // errorText={passwordErrorText}
+
+                    // value={password}
+                    // onChange={onPasswordChange}
+                    // required
+                    // setIsVisited={setPasswordIsVisited}
+                    // isError={passwordShouldShowError}
+                    // errorText={passwordErrorText}
                     />
                   </div>
                   <div className="input-box">
                     <i className="fas fa-lock" />
                     <input
                       placeholder="Enter your code"
-                      // label="Code *"
-                      // type="number"
-                      // value={code}
-                      // onChange={onCodeChange}
-                      // required
-                      // setIsVisited={setcodeIsVisited}
-                      // isError={codeShouldShowError}
-                      // errorText={codeErrorText}
+                    // label="Code *"
+                    // type="number"
+                    // value={code}
+                    // onChange={onCodeChange}
+                    // required
+                    // setIsVisited={setcodeIsVisited}
+                    // isError={codeShouldShowError}
+                    // errorText={codeErrorText}
                     />
                   </div>
                   <div className="text">
                     <Link to="/forgot-password">Forgot password?</Link>
                   </div>
                   <div className="button input-box">
-                    <input type="submit" value="Submit" onClick={handleSubmit}/>
+                    <input
+                      type="submit"
+                      value="Submit"
+                      onClick={handleSubmit}
+                    />
                   </div>
                   <div className="text sign-up-text">
-                    Don't have an account?{" "}
+                  Don&#x3f;t have an account&#x3f;{' '}
                     <label htmlFor="flip">Signup now</label>
+
                   </div>
                 </div>
               </form>
@@ -95,7 +99,7 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

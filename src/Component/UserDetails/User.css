@@ -1,6 +1,5 @@
 /* User.css */
 .container {
-  
   margin: 0 auto;
   padding: 20px;
 }
@@ -15,7 +14,8 @@ table {
   margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
   text-align: center;
 }
@@ -93,12 +93,12 @@ button:hover {
   margin-right: 10px;
 }
 .table-container {
-   /* Adjust the height as per your requirement */
+  /* Adjust the height as per your requirement */
   overflow: auto;
 }
-.tableDiv{
+.tableDiv {
   overflow-x: auto;
 }
-.courseTable{
+.courseTable {
   min-width: 170px !important;
 }
