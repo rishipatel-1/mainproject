@@ -25,7 +25,8 @@
 }
 .LoginContainer {
   max-width: 850px;
-  height: 60vh;
+  /* height: 60vh; */
+  min-height: 540px;
 }
 .container .cover {
   position: absolute;
