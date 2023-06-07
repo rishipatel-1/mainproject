@@ -134,16 +134,6 @@ const UserComponent: React.FC = () => {
     })
   }
 
-  // const handleEditDeleteCourse = (course: string) => {
-  //   setSelectedStudent((prevStudent) => {
-  //     if (prevStudent) {
-  //       const updatedCourses = prevStudent.courses.filter((c) => c !== course);
-  //       return { ...prevStudent, courses: updatedCourses };
-  //     }
-  //     return null;
-  //   });
-  // };
-
   const scrollToLatestStudent = () => {
     if (tableRef.current != null) {
       tableRef.current.lastElementChild?.scrollIntoView({ behavior: 'smooth' })

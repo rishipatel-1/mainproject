@@ -53,13 +53,6 @@ const Login: React.FC = () => {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
-
-                    // value={password}
-                    // onChange={onPasswordChange}
-                    // required
-                    // setIsVisited={setPasswordIsVisited}
-                    // isError={passwordShouldShowError}
-                    // errorText={passwordErrorText}
                     />
                   </div>
                   <div className="input-box">
