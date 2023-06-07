@@ -149,6 +149,7 @@ const StudentCourse: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState(null)
 
   const handleCourseClick = (course: any) => {
+    console.log('error')
     setSelectedCourse(course)
   }
 
@@ -158,7 +159,7 @@ const StudentCourse: React.FC = () => {
 
   return (
     <div className="course-container">
-      {selectedCourse === 'true'
+      {selectedCourse != null
         ? (
         <CourseDetails course={selectedCourse} onBack={handleBackClick} />
           )

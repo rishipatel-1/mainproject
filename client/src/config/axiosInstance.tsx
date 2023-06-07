@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/prefer-optional-chain */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { getCookie } from 'react-use-cookie'
@@ -16,7 +18,7 @@ axiosInstance.interceptors.request.use((config) => {
   }
   if (!token) {
     // eslint-disable-next-line no-undef
-    window.location.href = '/login'
+    window.location.href = '/'
   }
   // eslint-disable-next-line no-param-reassign
   config.headers.Authorization = token

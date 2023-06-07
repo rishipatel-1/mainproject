@@ -1,18 +1,63 @@
-import React, { useState } from 'react'
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-
+import toast from 'react-hot-toast'
 import './Login.css'
 import Registerr from '../Register/Register'
+import { login } from '../../../api/users'
+import getLoginDetails from '../../../utils/getLoginDetails'
+import { setCookie } from 'react-use-cookie'
+import jwt from 'jwt-decode'
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassowrd] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [code, setCode] = useState('')
   const navigator = useNavigate()
 
   const handleSubmit = (event: any) => {
     console.log('clicked')
-    navigator('/dashboard')
+    // navigator('/dashboard')
     event.preventDefault()
+
+    login({ email, password, code }).then(async (resp: any) => {
+      console.log(resp)
+      if (resp === null || resp === undefined) {
+        toast.error('Invalid UserName or Password')
+        return
+      }
+
+      if (resp.status !== 200) {
+        console.log('Error Whle Logging in: ', resp)
+      }
+
+      setCookie('token', resp.data.token, { path: '/' })
+
+      const user: any = await jwt(resp.data.token)
+
+      if (user.role === 'admin') {
+        // navigate to admin dashboard
+      } else if (user.role === 'student') {
+        // navigate to student dashboard
+      }
+      console.log('Logged In if here')
+    }).catch(err => {
+      console.log('Error While Logging in: ', err)
+    })
   }
+
+  useEffect(() => {
+    const decoded: any = getLoginDetails()
+    if (decoded) {
+      if (decoded.role === 'student') {
+        // navigate to student dashboard
+
+      } else if (decoded.role === 'admin') {
+        // navigate to admin dashboard
+      }
+    }
+  }, [])
 
   return (
     <div className="main-container">
@@ -46,6 +91,8 @@ const Login: React.FC = () => {
                       type="text"
                       placeholder="Enter your email"
                       required
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value) }}
                     />
                   </div>
                   <div className="input-box">
@@ -53,12 +100,22 @@ const Login: React.FC = () => {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => { setPassword(e.target.value) }}
+                    // value={password}
+                    // onChange={onPasswordChange}
+                    // required
+                    // setIsVisited={setPasswordIsVisited}
+                    // isError={passwordShouldShowError}
+                    // errorText={passwordErrorText}
                     />
                   </div>
                   <div className="input-box">
                     <i className="fas fa-lock" />
                     <input
                       placeholder="Enter your code"
+                      value={code}
+                      onChange={(e) => { setCode(e.target.value) }}
                     // label="Code *"
                     // type="number"
                     // value={code}

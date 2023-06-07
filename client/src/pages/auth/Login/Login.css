@@ -14,6 +14,7 @@
   padding: 30px;
 }
 .container {
+  height: auto !important;
   position: relative;
   /* max-width: 850px; */
   /* width: 90%; */
