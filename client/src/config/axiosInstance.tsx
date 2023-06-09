@@ -17,10 +17,8 @@ axiosInstance.interceptors.request.use((config) => {
     return config
   }
   if (!token) {
-    // eslint-disable-next-line no-undef
     window.location.href = '/'
   }
-  // eslint-disable-next-line no-param-reassign
   config.headers.Authorization = token
 
   return config

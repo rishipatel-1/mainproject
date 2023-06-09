@@ -18,7 +18,6 @@ const Login: React.FC = () => {
 
   const handleSubmit = (event: any) => {
     console.log('clicked')
-    // navigator('/dashboard')
     event.preventDefault()
 
     login({ email, password, code }).then(async (resp: any) => {
@@ -37,9 +36,9 @@ const Login: React.FC = () => {
       const user: any = await jwt(resp.data.token)
 
       if (user.role === 'admin') {
-        // navigate to admin dashboard
+        navigator('/Admindashboard')
       } else if (user.role === 'student') {
-        // navigate to student dashboard
+        navigator('/Studentdashboard')
       }
       console.log('Logged In if here')
     }).catch(err => {
@@ -51,10 +50,9 @@ const Login: React.FC = () => {
     const decoded: any = getLoginDetails()
     if (decoded) {
       if (decoded.role === 'student') {
-        // navigate to student dashboard
-
+        navigator('/Studentdashboard')
       } else if (decoded.role === 'admin') {
-        // navigate to admin dashboard
+        navigator('/Admindashboard')
       }
     }
   }, [])
@@ -102,13 +100,7 @@ const Login: React.FC = () => {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => { setPassword(e.target.value) }}
-                    // value={password}
-                    // onChange={onPasswordChange}
-                    // required
-                    // setIsVisited={setPasswordIsVisited}
-                    // isError={passwordShouldShowError}
-                    // errorText={passwordErrorText}
-                    />
+                      />
                   </div>
                   <div className="input-box">
                     <i className="fas fa-lock" />
@@ -116,14 +108,6 @@ const Login: React.FC = () => {
                       placeholder="Enter your code"
                       value={code}
                       onChange={(e) => { setCode(e.target.value) }}
-                    // label="Code *"
-                    // type="number"
-                    // value={code}
-                    // onChange={onCodeChange}
-                    // required
-                    // setIsVisited={setcodeIsVisited}
-                    // isError={codeShouldShowError}
-                    // errorText={codeErrorText}
                     />
                   </div>
                   <div className="text">

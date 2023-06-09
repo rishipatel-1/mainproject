@@ -1,4 +1,6 @@
+const { Chapters } = require("../models/chapters");
 const { Courses } = require("../models/courses");
+const { Submissions } = require("../models/submission");
 const { User } = require("../models/user");
 
 const { validateToken } = require("../utils/validatetoken");
@@ -7,7 +9,16 @@ const addCourse = async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await await validateToken(req.headers.authorization);
+    console.log("Val_result: ", val_result);
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    console.log("Val_result: ", val_result);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -44,7 +55,7 @@ const updateCourse = async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -81,7 +92,7 @@ const updateCourse = async (req, res) => {
 
 const deleteCourse = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -113,12 +124,19 @@ const AddStudentstoCourse = async (req, res) => {
   try {
     const { studentEmail, stack } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
         message: "Access Denied ",
       });
+      return;
+    }
+
+    const course = await Courses.findOne({ _id: req.params.courseId });
+
+    if (!course) {
+      res.status(500).json({ message: "Error Course does not exist" });
       return;
     }
 
@@ -128,6 +146,7 @@ const AddStudentstoCourse = async (req, res) => {
         $set: {
           stack: stack,
         },
+        $addToSet: { courses: req.params.courseId },
       },
       { new: true }
     );
@@ -161,9 +180,139 @@ const AddStudentstoCourse = async (req, res) => {
   }
 };
 
+const AddStudentstoCourses = async (req, res) => {
+  try {
+    const { studentEmail, stack, courseList } = req.body;
+
+    console.log("Student Enrollment: ", req.body);
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({ _id: { $in: courseList } });
+
+    if (!course) {
+      res.status(500).json({ message: "Error Course does not exist" });
+      return;
+    }
+
+    // const student = await User.findOneAndUpdate(
+    //   { email: studentEmail },
+    //   {
+    //     $set: {
+    //       stack: stack,
+    //     },
+    //     $addToSet: { courses: { $each: courseList } },
+    //   },
+    //   { new: true }
+    // );
+
+    // const student = await User.findOne({
+    //   email: studentEmail,
+    // });
+
+    const student = await User.findOneAndUpdate(
+      { email: studentEmail },
+      {
+        $set: {
+          stack: stack,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!student) {
+      res.status(500).json({ message: "Error While updating Student Stack" });
+      return;
+    }
+
+    // const uCourse = await Courses.findByIdAndUpdate(
+    //   req.params.courseId,
+    //   { $addToSet: { enrolled_students: student._id } },
+    //   { new: true }
+    // );
+
+    const ucourses = await Courses.updateMany(
+      { _id: { $in: courseList } },
+      {
+        $addToSet: { enrolled_students: student._id },
+      }
+    );
+
+    if (!ucourses) {
+      res
+        .status(500)
+        .json({ message: "Error While Enrolling Student for Course" });
+      return;
+    }
+    res
+      .status(200)
+      .json({ message: "Student Enrollment Successfull", course: ucourses });
+  } catch (err) {
+    console.log("Error While Enrolling Student for Course:\n", err);
+    res.status(500).json({
+      message: "Error While Enrolling Student for Course",
+      error: err,
+    });
+  }
+};
+
+const removeEnrollment = async (req, res) => {
+  try {
+    const { studentId, courseId } = req.body;
+
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const student = await User.updateOne(
+      { _id: studentId },
+      { $pull: { enrolled_courses: courseId } }
+    );
+
+    if (!student) {
+      res.status(500).json({ message: "Error While deleting Student Stack" });
+      return;
+    }
+
+    const ucourses = await Courses.updateOne(
+      { _id: courseId },
+      {
+        $pull: { enrolled_students: studentId },
+      }
+    );
+
+    if (!ucourses) {
+      res
+        .status(500)
+        .json({ message: "Error While deleting Student for Course" });
+      return;
+    }
+    res.status(200).json({
+      message: "Student Enrollment deleted Successfull",
+      course: ucourses,
+    });
+  } catch (err) {
+    console.log("Error While Deleting Enrollment", err);
+    res.status(500).json({ message: "Error WHile Deleting Enrollment" });
+  }
+};
+
 const getAllCourse = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -178,7 +327,14 @@ const getAllCourse = async (req, res) => {
       res.status(500).json({ message: "Error While Fetching All Courses" });
       return;
     }
-    res.status(200).json({ message: "All Courses", courses: AllCourses });
+
+    const studentCount = await User.countDocuments({ user_role: "student" });
+
+    res.status(200).json({
+      message: "All Courses",
+      courses: AllCourses,
+      totalStudents: studentCount,
+    });
   } catch (err) {
     console.log("Error While Fetching Course:\n", err);
     res
@@ -189,7 +345,7 @@ const getAllCourse = async (req, res) => {
 
 const getStudentCourse = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -199,7 +355,7 @@ const getStudentCourse = async (req, res) => {
     }
 
     const StudCourses = await Courses.find({
-      enrolled_students: req.params.studentId,
+      enrolled_students: val_result.user,
     })
       .populate({
         path: "createdBy",
@@ -225,6 +381,78 @@ const getStudentCourse = async (req, res) => {
   }
 };
 
+const getCourseById = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid) {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({ _id: req.params.courseId })
+      .populate("enrolled_students")
+      .populate("createdBy");
+    if (!course) {
+      res.status(500).json({ message: "Error While Fetching  Course" });
+      return;
+    }
+    res.status(200).json({ message: "Course", course: course });
+  } catch (err) {
+    console.log("Error While Fetching COurse By Id : ", err);
+    res.status(500).json({ message: "Error While Fetching Course By Id" });
+  }
+};
+
+const getCourseProgress = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid) {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({
+      _id: req.params.courseId,
+      enrolled_students: val_result.user,
+    })
+      .populate("enrolled_students")
+      .populate("createdBy");
+    if (!course) {
+      res.status(500).json({ message: "Error While Fetching  Course" });
+      return;
+    }
+
+    const chapters = await Chapters.find({ course: req.params.courseId });
+
+    if (!chapters) {
+      res.status(500).json({ message: "Error While Fetching  Chapters" });
+      return;
+    }
+
+    const chapterIds = chapters.map((chap) => chap._id);
+    const grades = await Submissions.find({
+      student: val_result.user,
+      chapter: { $in: chapterIds },
+    }).populate("chapter");
+
+    res.status(200).json({
+      message: "Course",
+      course: course,
+      chapters: chapters,
+      submission: grades,
+    });
+  } catch (err) {
+    console.log("Error While Fetching COurse By Id : ", err);
+    res.status(500).json({ message: "Error While Fetching Course By Id" });
+  }
+};
+
 module.exports = {
   addCourse,
   updateCourse,
@@ -232,4 +460,8 @@ module.exports = {
   AddStudentstoCourse,
   getAllCourse,
   getStudentCourse,
+  AddStudentstoCourses,
+  removeEnrollment,
+  getCourseById,
+  getCourseProgress,
 };

@@ -1,6 +1,6 @@
 import axiosInstance from '../config/axiosInstance'
 
-const signUp = async (payload) => {
+const signUp = async (payload: string) => {
   axiosInstance('/signup', {
     method: 'POST',
     data: payload

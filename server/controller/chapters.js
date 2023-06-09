@@ -7,7 +7,8 @@ const addChapters = async (req, res) => {
   try {
     const { title, description, practical, image } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    console.log("Images: ", image);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -16,27 +17,30 @@ const addChapters = async (req, res) => {
       return;
     }
 
-    const course = await Courses.find({ _id: req.params.courseId });
+    const course = await Courses.findOne({ _id: req.params.courseId });
 
     if (!course) {
       res.status(500).json({ message: "No Course Found" });
       return;
     }
 
-    const user = await User.find({ _id: val_result.user });
+    const user = await User.findOne({ _id: val_result.user });
 
     if (!user) {
       res.status(500).json({ message: "No user Found" });
       return;
     }
 
+    console.log("User: ", user);
+    console.log("Course: ", course);
+
     const chapter = await Chapters.create({
       title,
       description,
       practical,
-      image,
       course: course._id,
       createdBy: user._id,
+      image,
     });
 
     if (!chapter) {
@@ -51,7 +55,7 @@ const addChapters = async (req, res) => {
       chapter,
     });
   } catch (err) {
-    console.log("Error While Creating Chatpers for Course");
+    console.log("Error While Creating Chatpers for Course", err);
     res.status(500).json({ message: "Error While Creating Chapters" });
   }
 };
@@ -59,7 +63,7 @@ const addChapters = async (req, res) => {
 const updateChapter = async (req, res) => {
   try {
     const { title, description, practical, image } = req.body;
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -70,7 +74,7 @@ const updateChapter = async (req, res) => {
 
     const uChapter = await Chapters.findOneAndUpdate(
       {
-        _id: req.params.chatperId,
+        _id: req.params.chapterId,
       },
       {
         $set: {
@@ -99,7 +103,7 @@ const updateChapter = async (req, res) => {
 
 const deleteChapter = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -125,7 +129,7 @@ const deleteChapter = async (req, res) => {
 
 const getChapterByCourseId = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({

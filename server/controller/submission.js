@@ -2,17 +2,53 @@ const { validateToken } = require("../utils/validatetoken");
 const { Submissions } = require("../models/submission");
 const { User } = require("../models/user");
 const { Chapters } = require("../models/chapters");
+const { Courses } = require("../models/courses");
 
 const AddSubmission = async (req, res) => {
   try {
-    const { status } = req.body;
-
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
         message: "Access Denied ",
       });
+      return;
+    }
+
+    const alreadySubmitted = await Submissions.findOne({
+      student: val_result.user,
+      chapter: req.params.chapterId,
+    });
+
+    console.log("Submission: ", alreadySubmitted);
+
+    if (alreadySubmitted) {
+      const uSubmission = await Submissions.findOneAndUpdate(
+        {
+          student: val_result.user,
+          chapter: req.params.chapterId,
+        },
+        {
+          $set: {
+            status: "Re Submitted",
+          },
+        },
+        { new: true }
+      );
+
+      if (!uSubmission) {
+        console.log(
+          "Error While Updating ALready existing Submission: ",
+          uSubmission
+        );
+        res.status(500).json({
+          message: "Error While Updatind Already Existing Submission",
+        });
+        return;
+      }
+      res
+        .status(200)
+        .json({ message: "Submission Updated Successfully", uSubmission });
       return;
     }
 
@@ -31,9 +67,9 @@ const AddSubmission = async (req, res) => {
     }
 
     const submission = await Submissions.create({
-      student: req.params.user,
+      student: val_result.user,
       chapter: req.params.chapterId,
-      status,
+      // status,
     });
 
     if (!submission) {
@@ -53,7 +89,7 @@ const updateSubmission = async (req, res) => {
   try {
     const { status } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -104,7 +140,7 @@ const gradeSubmission = async (req, res) => {
   try {
     const { grade, status } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -140,7 +176,7 @@ const gradeSubmission = async (req, res) => {
 
 const deleteSubmission = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -166,7 +202,7 @@ const deleteSubmission = async (req, res) => {
 
 const getSubmissionByStudentId = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -196,7 +232,7 @@ const getSubmissionByStudentId = async (req, res) => {
 
 const getAllSubmission = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result !== "admin") {
       res.status(401).json({
@@ -222,6 +258,61 @@ const getAllSubmission = async (req, res) => {
   }
 };
 
+const testgetSubmssision = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+
+    console.log("Result of val_result: ", val_result);
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    let userData = await User.find({ user_role: "student" });
+
+    userData = await Promise.all(
+      userData.map(async (user) => {
+        const Allcourses = await Courses.find({ enrolled_students: user._id });
+        const courses_ids = Allcourses.map((course) => course._id);
+        const submittedPracticals = await Submissions.find({
+          student: user._id,
+        }).populate("chapter");
+        const totalTasks = await Chapters.countDocuments({
+          course: { $in: courses_ids },
+        });
+
+        return {
+          ...user,
+          courses: Allcourses,
+          tasksCompleted: submittedPracticals.length,
+          totalTasks: totalTasks,
+          submittedPracticals: submittedPracticals,
+        };
+      })
+    );
+
+    const stacks = await User.distinct("stack", {
+      $and: [{ stack: { $ne: null } }, { stack: { $exists: true, $ne: "" } }],
+    });
+
+    if (!userData) {
+      console.log("error  While fetching submissions: ", userData);
+      res.status(500).json({ message: "Error while fetching submissions" });
+    }
+
+    res.status(200).json({
+      message: "Submissions Fetched",
+      allsubmission: userData,
+      stacks,
+    });
+  } catch (err) {
+    console.log("Error  while Fetching submission: ", err);
+    res.status(500).json({ message: "Error While Fetching SUbmissions" });
+  }
+};
+
 module.exports = {
   AddSubmission,
   updateSubmission,
@@ -229,4 +320,5 @@ module.exports = {
   deleteSubmission,
   getSubmissionByStudentId,
   getAllSubmission,
+  testgetSubmssision,
 };

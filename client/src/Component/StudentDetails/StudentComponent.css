@@ -13,6 +13,54 @@ table {
   border-collapse: collapse;
   margin-bottom: 20px;
 }
+/* Style for the select input */
+select {
+  padding: 8px;
+  font-size: 14px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+/* Style for the input field */
+input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Optional style for the dropdown */
+.dropdown {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown div {
+  padding: 4px;
+  cursor: pointer;
+}
+
+.dropdown div:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown div.selected {
+  background-color: #b3d4fc;
+}
+
+
+/* Optional style for the label */
+label {
+  margin-bottom: 8px;
+  display: block;
+  font-weight: bold;
+}
 
 th,
 td {
@@ -83,6 +131,12 @@ button:hover {
 }
 
 .modal-body input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.select-course {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;

@@ -22,13 +22,14 @@ const getToken = async (req, res) => {
   }
 
   const user = await User.findOne({ email });
-
+  console.log("After Finding Users:", user);
   if (!user) {
     res.status(401).json({ message: "user does not exists" });
     return;
   }
 
   if (!(await validatePassHash(password, user.password))) {
+    console.log("Invalid Password");
     res.status(401).json({ message: "invalid password" });
     return;
   }
@@ -41,7 +42,7 @@ const getToken = async (req, res) => {
   }
 
   if (user.Enable_2FactAuth) {
-    const verified = speakeasy.totp.verify({
+    const verified = await speakeasy.totp.verify({
       secret: user.twoFactSecret,
       encoding: "base32",
       token: code,
@@ -51,7 +52,7 @@ const getToken = async (req, res) => {
       return;
     }
   }
-
+  console.log("Reached Here sending response: ");
   const accessToken = jwt.sign(
     {
       id: user._id,
@@ -61,6 +62,7 @@ const getToken = async (req, res) => {
     { expiresIn: "1d" }
   );
 
+  console.log("Reponse sending : ", accessToken);
   res.json({ token: accessToken });
 };
 
@@ -122,6 +124,7 @@ const signup = async (req, res) => {
     verificationToken: verificationToken,
     is_verified: false,
     Enable_2FactAuth: Enable_2FactAuth,
+    courses: [],
   });
 
   if (!user) {
@@ -129,7 +132,7 @@ const signup = async (req, res) => {
     return;
   }
 
-  res.json({ message: "User Created Verify Email to Proceed" });
+  res.status(200).json({ message: "User Created Verify Email to Proceed" });
 };
 
 const validateToken = async (req, res) => {
@@ -193,10 +196,13 @@ const verifyEmail = async (req, res) => {
         expires: new Date(Date.now() + 900000),
       });
     }
-
+    res.cookie("token", accessToken, {
+      httpOnly: false,
+      expires: new Date(Date.now() + 900000),
+    });
     console.log("Email Verified");
     res.redirect(
-      `${process.env.base_url}:${process.env.PORT}/email-verified?token=${accessToken}`
+      `${process.env.FRONT_PORT}/email-verified?token=${accessToken}`
     );
   } catch (err) {
     console.log("Error While Verifying email Addres", err);
@@ -205,19 +211,28 @@ const verifyEmail = async (req, res) => {
 };
 
 const getAllUsers = async (req, res) => {
-  const users = await User.find({ user_role: "student" }).select({
-    _id: 1,
-    //userId: 1,
-    username: 1,
-    email: 1,
-    user_role: 1,
-    stack: 1,
-  });
+  const users = await User.find({
+    user_role: "student",
+    $expr: { $gte: [{ $size: "$enrolled_courses" }, 1] },
+  }).populate("enrolled_courses");
+  // .select({
+  //   _id: 1,
+  //   //userId: 1,
+  //   username: 1,
+  //   email: 1,
+  //   user_role: 1,
+  //   stack: 1,
+  //   courses: 1,
+  // });
+
+  console.log("user.log: ", users.enrolled_courses);
 
   if (!users) {
     res.status(500).json({ message: "Error While Fetching Users" });
     return;
   }
+
+  console.log("SEnding: ", users);
 
   res.status(200).json({ users });
 };

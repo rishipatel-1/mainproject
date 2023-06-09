@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react'
-import { Toaster } from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 import getLoginDetails from '../../../utils/getLoginDetails'
 import { signUp } from '../../../api/users'
+import { useNavigate } from 'react-router-dom'
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const navigator = useNavigate()
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
-    // Use the name, email, and password values here
     console.log('Name:', name)
     console.log('Email:', email)
     console.log('Password:', password)
@@ -25,12 +25,18 @@ const Register: React.FC = () => {
       Enable_2FactAuth: false
     }
 
-    signUp(payload).then((response) => {
-      // Handle successful signup
+    setName('')
+    setEmail('')
+    setPassword('')
+    signUp(payload).then((response: any) => {
+      if (response.status !== 200) {
+        console.log('Error While Signup: ', response)
+      }
       console.log('Signup successful:', response)
+      navigator('/login')
+      toast.success(response.data.message)
     })
       .catch((error) => {
-      // Handle signup error
         console.error('Signup error:', error)
       })
   }
@@ -40,9 +46,9 @@ const Register: React.FC = () => {
 
     if (decoded) {
       if (decoded.role === 'admin') {
-        // navigate to admin dashboard
+        navigator('/Admindashboard')
       } else if (decoded.role === 'student') {
-        // navigate to sutdent dasbhoard
+        navigator('/Studentdashboard')
       }
     }
   }, [])
