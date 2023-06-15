@@ -7,6 +7,15 @@
   margin-bottom: 5px;
 }
 
+
+
+.description {
+  display: -webkit-box;
+  --max-lines: 2;  -webkit-box-orient: vertical;
+  overflow: hidden;
+ -webkit-line-clamp: var();
+}
+
 .title {
   font-size: 30px;
   font-weight: 600;
