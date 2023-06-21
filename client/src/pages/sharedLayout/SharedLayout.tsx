@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
@@ -10,7 +9,6 @@ const SharedLayout = () => {
   const navigator = useNavigate()
 
   useEffect(() => {
-    console.log('Checking ', decoded)
     if (!decoded.role) {
       navigator('/login')
     }

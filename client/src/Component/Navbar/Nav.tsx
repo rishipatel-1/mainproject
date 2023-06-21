@@ -1,11 +1,14 @@
-import React, { useState, useEffect, Children } from 'react'
+import React, { useState, useEffect, Children, ReactNode } from 'react'
 import './Navbar.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { setCookie } from 'react-use-cookie'
 import { IoLogOutOutline } from 'react-icons/io5'
 
-const Navbar = ({ isAdmin, children }: any) => {
-  // Accept a prop "isAdmin" to determine the user role
+interface NavbarProps {
+  isAdmin: boolean
+  children: ReactNode
+}
+const Navbar = ({ isAdmin, children }: NavbarProps) => {
   const [isMenuOpen, setMenuOpen] = useState(window.innerWidth >= 700)
   const [isMobile, setIsMobile] = useState(false)
   const [isDashboardVisible, setDashboardVisible] = useState(false)
@@ -28,7 +31,7 @@ const Navbar = ({ isAdmin, children }: any) => {
     }
   }, [])
 
-  function handleSignout (event: any): void {
+  function handleSignout (): void {
     setCookie('token', '', { path: '/' })
     navigator('/login')
   }
@@ -37,40 +40,35 @@ const Navbar = ({ isAdmin, children }: any) => {
     <div>
       <div className="top-bar">
         {isMobile && (
+          <div>
           <i
             className={`nav__toggle fa ${isMenuOpen ? 'fa-times' : 'fa-bars'
               } m-2`}
             aria-hidden="true"
             onClick={toggleMenu}
           ></i>
+              <strong>
+                  Edu<span>Hub</span>
+                </strong>
+          </div>
         )}
         {!isMobile && (
+          <div>
           <img
-            className="logo__icon ms-2"
-            src="https://www.youshe.id/favicon.ico"
+            className="logo__icon ms-2 rounded-4"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaj1fmCB9MtpT1zpCv6vARJMN_wqmgIa_QIQ&usqp=CAU"
             alt="Logo"
             onClick={toggleMenu}
           />
+          <strong>
+          Edu<span>Hub</span>
+        </strong>
+        </div>
         )}
-        <div className="drop-item  fixed-bottom-dropdown mr-3">
-        <a
-  href="#"
-  className="d-flex align-items-center text-decoration-none dropdown-toggle text-white"
-  id="dropdownUser2"
-  data-bs-toggle="dropdown"
-  aria-expanded="false"
->
-  <div className="sign-out-icon text-white" style={{ height: '25px' }}>
-  <IoLogOutOutline className="icon"/>
-  </div>
-</a>
-          <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-            <li>
-              <div className="dropdown-item" onClick={handleSignout}>
-                Sign out
-              </div>
-            </li>
-          </ul>
+        <div className='d-flex'>
+        <div className="Logout-main" onClick={handleSignout}>
+        <IoLogOutOutline className='me-1 icon-logout'/><span className='log-out-text me-3'>Log out</span>
+            </div>
         </div>
       </div>
       <div className="d-flex">
@@ -79,15 +77,15 @@ const Navbar = ({ isAdmin, children }: any) => {
             <nav className={`nav ${isMobile ? 'show' : ''}`}>
               <div className="m-logo">
                 <img
-                  className="logo__icon"
-                  src="https://www.youshe.id/favicon.ico"
+                  className="logo__icon rounded-4"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaj1fmCB9MtpT1zpCv6vARJMN_wqmgIa_QIQ&usqp=CAU"
                   alt="Logo"
                 />
-                <strong>
+                <strong className='Eduhub-text'>
                   Edu <span>Hub</span>
                 </strong>
               </div>
-              <hr />
+              <hr className='m-0 mt-3' />
               {isAdmin === true && (
                 <>
                   <Link
@@ -109,23 +107,11 @@ const Navbar = ({ isAdmin, children }: any) => {
                     <i className="fa fa-users" aria-hidden="true"></i>
                     <span>Manage Students</span>
                   </Link>
-                  {/* <Link
-                    className="nav__item"
-                    role="button"
-                    to="/gradeStudent"
-                    style={{
-                      textDecoration: 'none',
-                      color: 'white'
-                    }}
-                  >
-                    <i className="fa fa-user" aria-hidden="true"></i>
-                    <span>Student Update</span>
-                  </Link> */}
                 </>
               )}
 
               {isAdmin === false && (
-                <Link className="nav__item" role="button" to='/courses'
+                <Link className="nav__item mt-3" role="button" to='/courses'
                   style={{
                     textDecoration: 'none',
                     color: 'white'
@@ -150,23 +136,23 @@ const Navbar = ({ isAdmin, children }: any) => {
           </div>
           <div className="content-area">
             {!isDashboardVisible &&
-            (
+              (
                 <p className="text-center">
                   {isAdmin === true
                     ? (
                       <>
-                        Welcome Admin{' '}
+                       <strong className='text-welcome'> Welcome Admin</strong>{' '}
                         <i className="fa fa-smile-o" aria-hidden="true"></i>
                       </>
-                      )
+                    )
                     : (
                       <>
-                        Welcome Student{' '}
+                        <strong className='text-welcome'> Welcome Student</strong>{' '}
                         <i className="fa fa-smile-o" aria-hidden="true"></i>
                       </>
-                      )}
+                    )}
                 </p>
-            )}
+              )}
 
             {children}
           </div>
