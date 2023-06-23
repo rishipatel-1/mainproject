@@ -15,11 +15,8 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [System Requirements](#system-requirements)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Support](#support)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
@@ -54,34 +51,11 @@ EduHub is a comprehensive web application developed to streamline student data m
 - Node.js: Version 14.x or higher
 - MongoDB: Version 4.x or higher
 - Code Editor: Visual Studio Code, Atom, or any preferred text editor
-
-## Installation
-
-1. Clone the repository: `git clone https://github.com/your-username/eduhub.git`
-2. Navigate to the project directory: `cd eduhub`
-3. Install dependencies: `npm install`
-
-## Usage
-
-1. Start the development server: `npm start`
-2. Access EduHub in your web browser: `http://localhost:3000`
-
+  
 ## Support
 
 If you encounter any issues or have any questions, please visit the Help section on the EduHub website for frequently asked questions and troubleshooting guides.
+You can also contact the EduHub support team via email at rishi.p@simformsolutions.com
 
-You can also contact the EduHub support team via email at support@eduhub.com or by phone at +1-123-456-7890.
-
-## Contributing
-
-Contributions to EduHub are welcome! If you have any improvements or new features to propose, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature-name`
-3. Make your changes and commit them: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin feature-name`
-5. Submit a pull request.
-
-## License
-
-The EduHub project is licensed under the [MIT License](LICENSE).
+## :rocket: Check Live:
+https://eduhub-83r7.onrender.com
