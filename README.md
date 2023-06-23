@@ -1,14 +1,17 @@
-<h1 align="center">
-  <img src="logo.png" alt="EduHub" width="400px">
-</h1>
+![Screenshot from 2023-06-23 13-41-49](https://github.com/rishipatel-1/mainproject/assets/122262469/55ceceba-475f-4a9d-8006-f36e8b5377aa)
+
 
 <p align="center">
   <strong>A Comprehensive Student Management System</strong>
 </p>
 
-<p align="center">
-  <img src="demo.gif" alt="EduHub Demo" width="800px">
-</p>
+
+
+Uploading Untitled (1) (1).mp4…
+
+
+
+https://github.com/rishipatel-1/mainproject/assets/122262469/6e652e7d-7f0a-4de8-b8b0-2cf2203b6c98
 
 ## Table of Contents
 
