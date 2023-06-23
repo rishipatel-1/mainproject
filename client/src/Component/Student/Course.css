@@ -140,3 +140,10 @@
 .show-grades-button:hover {
   background-color: #1e87db;
 }
+@media (max-width:768px){
+  .chapter-container-student {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 20px;
+  }
+}

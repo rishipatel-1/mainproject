@@ -294,20 +294,20 @@ const Coursedetails: React.FC = () => {
           <div className='courses-details'>
             <h2 className='fs-1 fw-bold'>{course.title}</h2>
             <p className='py-2'>{course.description}</p>
-            <div className='d-flex align-items-center justify-content-between'>
-              <h5 className='mt-4'>List Of Chapters</h5>
+            <div className='d-flex align-items-center justify-content-between flex-column flex-sm-row'>
+              <h5 className='mt-3'>List Of Chapters</h5>
               <button className='btn btn-primary mt-4' onClick={toggleSidebar}>
                 {showDetails ? 'Add Chapter' : 'Add Chapter'}
               </button>
             </div>
-            <div className='row d-flex flex-column w-100'>
+            <div className='row d-flex flex-column w-100 m-0 p-0'>
               <div className='subcategories'>
                 {subCategories.length === 0 ? (
                   <div className='w-100 text-center m-4'>
                     <h4>No chapters added yet</h4>
                   </div>
                 ) : (
-                  <div className='row row-cols-1 row-cols-md-3 g-4'>
+                  <div className='row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4'>
                     {subCategories.map((subCategory, index) => (
                       <div className='col mb-4' key={index}>
                         <Card className='h-100'>
@@ -425,8 +425,8 @@ const Coursedetails: React.FC = () => {
                 {selectedCourse ? 'Update Chapter' : 'Add Chapter'}
               </button>
             </form>
-            <button className='ms-4 w-25' onClick={handleModal}>
-              back
+            <button className='ms-4 back-course' onClick={handleModal}>
+            &larr; &nbsp; back
             </button>
           </div>
         </div>

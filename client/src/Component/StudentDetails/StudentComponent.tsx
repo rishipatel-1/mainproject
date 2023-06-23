@@ -107,7 +107,6 @@ const UserComponent: React.FC = () => {
     _id: '',
     courses: []
   })
-  // const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [selectedStudent, setSelectedStudent] = useState<any>(null)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -115,7 +114,7 @@ const UserComponent: React.FC = () => {
 
   const navigate = useNavigate()
   const fetchAllUsers = async () => {
-    setLoading(true) // Set loading to true before fetching data
+    setLoading(true)
 
     try {
       const resp = await getAllUsers() as AxiosResponse
@@ -126,14 +125,13 @@ const UserComponent: React.FC = () => {
     } catch (err) {
       console.log('Error While Fetching All Users:', err)
     } finally {
-      setLoading(false) // Set loading to false after receiving the response or in case of an error
+      setLoading(false)
     }
   }
   useEffect(() => {
     fetchAllUsers().catch(err => {
       console.log('Error', err)
     })
-    // setStudents([])
   }, [])
 
   const fetchNewData = async () => {
@@ -200,7 +198,6 @@ const UserComponent: React.FC = () => {
   }
 
   const handleSaveStudent = async () => {
-    // Check if email or stack is empty
     if (!newStudent.email || !newStudent.stack || !newStudent.courseslist.length) {
       setValidationErrors({
         email: !newStudent.email ? 'Email is required.' : '',
@@ -224,7 +221,7 @@ const UserComponent: React.FC = () => {
     } catch (err) {
       console.log('Error While Adding Students:', err)
     } finally {
-      setLoading(false) // Set loading state back to false
+      setLoading(false)
       setNewStudent({
         id: 0,
         name: '',
@@ -375,7 +372,7 @@ const UserComponent: React.FC = () => {
             <div className="col-auto p-0">
               <h3 className="mt-3">Student Details</h3>
             </div>
-            <div className="row d-flex justify-content-between align-items-center">
+            <div className="row d-flex justify-content-between align-items-center flex-row">
 
               <div className="col-auto p-0">
                 <button
@@ -398,7 +395,7 @@ const UserComponent: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="table-container">
+          <div className="table-container mt-2">
             <table ref={tableRef}>
               <thead>
                 <tr>
@@ -419,8 +416,8 @@ const UserComponent: React.FC = () => {
                   <tr key={`${student._id}`}>
                     <td>{student.username}</td>
                     <td>{student.email}</td>
-                    <td>{student.stack === null ? 'No Stack' : student.stack}</td>
-                    <td>{student.coursesnames}</td>
+                    <td className='stacktable-td'>{student.stack === null ? 'No Stack' : student.stack}</td>
+                    <td className='coursetable-td'>{student.coursesnames}</td>
                     <td className='actions-student'>
                       <div className="icon-container">
                         <BsPencil

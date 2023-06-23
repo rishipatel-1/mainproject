@@ -40,7 +40,7 @@ const Login: React.FC = () => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{}':"\\|,.<>/?]).{8,}$/
     if (!passwordRegex.test(password)) {
       setPasswordError(
-        'Password should be at least 8 characters long, contain at least one capital letter, and one special symbol'
+        'Password must conatin a capital letter and atleast be 8 character long'
       )
     } else {
       setPasswordError('')

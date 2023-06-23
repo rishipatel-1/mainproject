@@ -168,8 +168,8 @@ const DashboardComponent: React.FC = () => {
         <div className="container DashboardContainer">
           <h3>Dashboard</h3>
           <ErrorBoundary>
-            <div className="row mt-4">
-              <div className="col-md-6 chart">
+            <div className="row mt-4 chart">
+              <div className="col-md-6">
                 <BarChart width={250} height={300} data={studentData}>
                   <Bar dataKey="data" fill="rgba(54, 162, 235, 0.6)" />
                   <XAxis dataKey="label" />
@@ -188,7 +188,7 @@ const DashboardComponent: React.FC = () => {
             </div>
           </ErrorBoundary>
           <ErrorBoundary>
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center flex-column flex-sm-row">
               <div className="text-center mt-4">
                 <h2 className="fw-bold">Courses</h2>
                 <hr />
@@ -209,7 +209,6 @@ const DashboardComponent: React.FC = () => {
                 >
                   {showDetails ? 'Add Course' : 'Add Course'}
                 </button>
-                <hr />
               </div>
             </div>
           </ErrorBoundary>

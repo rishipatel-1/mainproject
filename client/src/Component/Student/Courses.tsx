@@ -23,19 +23,6 @@ interface CourseDetailsProps {
   }
   onBack: () => void
 }
-interface Course {
-  _id: string
-  createdBy: string
-  description: string
-  image: string
-  isEditing: boolean
-  practical: string
-  submissions: Submission[]
-  tempGrade: null
-  title: string
-  __v: number
-}
-
 interface Submission {
   chapter: string
   grade: number
@@ -51,8 +38,9 @@ const CourseProgress: React.FC = () => {
   const [course, setCourse] = useState<any>({})
   const [chapters, setChapters] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
-  const [submissionFiles, setSubmissionFiles] = useState<any>([])
-  const [submission, setSubmission] = useState<any>([])
+  const [submissionFiles, setSubmissionFiles] = useState([])
+  const [selectedFile, setSelectedFile] = useState<boolean>(false)
+  const [submission, setSubmission] = useState([])
   const { courseId } = useParams()
   const navigator = useNavigate()
 
@@ -67,7 +55,7 @@ const CourseProgress: React.FC = () => {
           .then((resp: any) => {
             if (resp && resp.status === 200) {
               const fileLink = resp.data.upload_location
-              setSubmissionFiles((prevSubmissionFiles: any[]) => {
+              setSubmissionFiles((prevSubmissionFiles) => {
                 const existingSubmissionFile = prevSubmissionFiles.find((submissionFile) => submissionFile.chapterId === chapterId)
                 if (existingSubmissionFile) {
                   const updatedSubmissionFiles = prevSubmissionFiles.map((submissionFile) => {
@@ -96,7 +84,9 @@ const CourseProgress: React.FC = () => {
       console.log('Error while uploading file:', err)
     }
   }
-
+  const disableCheck = () => {
+    setSelectedFile(true)
+  }
   const fetchCourseProgress = useCallback(async () => {
     try {
       setLoading(true)
@@ -121,7 +111,7 @@ const CourseProgress: React.FC = () => {
   }, [courseId])
 
   const submitPractical = (chapterId: string) => {
-    const submissionFile = submissionFiles.find((file: any) => file.chapterId === chapterId)
+    const submissionFile = submissionFiles.find((file) => file.chapterId === chapterId)
     const fileLink = submissionFile ? submissionFile.fileLink : ''
 
     submitChapter(chapterId, { fileUrl: fileLink })
@@ -164,7 +154,7 @@ const CourseProgress: React.FC = () => {
             ) : (
               <div className="chapter-container-student">
                 {chapters.map((chapter: any, index: number) => {
-                  const chapterSubmission = submission.find((sub: any) => sub.chapter._id === chapter._id)
+                  const chapterSubmission = submission.find((sub) => sub.chapter._id === chapter._id)
 
                   return (
                     <Card className="chapter-card-student" key={chapter._id}>
@@ -179,7 +169,7 @@ const CourseProgress: React.FC = () => {
                             <div className={`dropzonee ${isDragActive ? 'active' : ''}`} {...getRootProps()}>
                               <input {...getInputProps()} />
                               {acceptedFiles.length === 0 ? (
-                                <p>Drag and Drop a file here, or click to select a file</p>
+                                <p onClick={disableCheck}>Drag and Drop a file here, or click to select a file</p>
                               ) : (
                                 <p>Selected file: {acceptedFiles[0].name}</p>
                               )}
@@ -188,7 +178,7 @@ const CourseProgress: React.FC = () => {
                         </Dropzone>
                       </div>
                       <div className="d-flex justify-content-between align-items-center">
-                      <Button className="mt-3 m-0 p-2" onClick={() => { submitPractical(chapter._id) }} disabled={submission == null}>
+                      <Button className="mt-3 m-0 p-2" onClick={() => { submitPractical(chapter._id) }} disabled={!selectedFile}>
                        Submit
                       </Button>
                           {chapterSubmission && (

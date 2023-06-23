@@ -36,7 +36,7 @@ const Register: React.FC = () => {
       /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{}':'\\|,.<>/?]).{8,}$/
     if (!passwordRegex.test(password)) {
       setPasswordError(
-        'Password should be at least 8 characters long, contain at least one capital letter, and one special symbol'
+        'Password must conatin a capital letter and atleast 8 be character long'
       )
     } else {
       setPasswordError('')
