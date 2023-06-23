@@ -1,15 +1,16 @@
+<h3 align="center">
+  <strong>A Comprehensive Student Management System</strong>
+</h3>
+
+
 ![Screenshot from 2023-06-23 13-41-49](https://github.com/rishipatel-1/mainproject/assets/122262469/55ceceba-475f-4a9d-8006-f36e8b5377aa)
 
+<br>
+<br>
 
-<p align="center">
-  <strong>A Comprehensive Student Management System</strong>
-</p>
-
-
-
-Uploading Untitled (1) (1).mp4…
-
-
+<h3 align="center">
+  Implementation Video
+</h3>
 
 https://github.com/rishipatel-1/mainproject/assets/122262469/6e652e7d-7f0a-4de8-b8b0-2cf2203b6c98
 
@@ -25,9 +26,6 @@ https://github.com/rishipatel-1/mainproject/assets/122262469/6e652e7d-7f0a-4de8-
 
 EduHub is a comprehensive web application developed to streamline student data management and enhance the learning experience. It provides a user-friendly platform for administrators and students to effectively manage courses, assignments, grades, and more.
 
-<p align="center">
-  <img src="screenshots/dashboard.png" alt="EduHub Dashboard" width="800px">
-</p>
 
 ## Features
 
